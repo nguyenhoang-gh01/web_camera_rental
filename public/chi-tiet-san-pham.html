@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết sản phẩm | FOCUS CAMERA</title>
+    <meta
+      name="description"
+      content="Bản clone giao diện trang chi tiết sản phẩm của FOCUS CAMERA, chỉ gồm frontend."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/images/favicon-focus.svg" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body class="subpage-body" data-page="detail">
+    <site-header></site-header>
+
+    <main class="page-shell page-simple">
+      <div class="container page-content-wrap" data-product-detail-page>
+        <section class="content-header-block detail-header-block">
+          <h1 data-detail-title>Đang tải sản phẩm...</h1>
+          <ol class="breadcrumb-list">
+            <li><a href="./index.html">Home</a></li>
+            <li data-detail-category>Thuê Camera (Máy ảnh)</li>
+            <li data-detail-breadcrumb>Đang tải sản phẩm...</li>
+          </ol>
+        </section>
+
+        <div class="detail-status" data-detail-status>Đang tải thông tin sản phẩm...</div>
+
+        <section class="product-detail-layout" data-detail-layout hidden>
+          <div class="detail-gallery">
+            <div class="detail-gallery-main">
+              <span class="detail-stars" aria-hidden="true">★★★★★</span>
+              <img class="detail-brand-badge" data-detail-company-logo alt="" hidden />
+              <img data-detail-active-image alt="" />
+            </div>
+            <div class="detail-thumbnails" data-detail-thumbnails></div>
+          </div>
+
+          <div class="detail-sidebar">
+            <section class="detail-card">
+              <h2>Thông tin nổi bật</h2>
+              <div class="detail-highlight-content" data-detail-highlights></div>
+            </section>
+
+            <section class="detail-card detail-price-card">
+              <div class="detail-card-heading">
+                <h2>Giá thuê</h2>
+                <button class="price-table-trigger" type="button" data-price-toggle>
+                  Bảng giá
+                </button>
+              </div>
+
+              <div class="detail-price-box">
+                <p><span data-detail-session-price>0</span>đ/buổi</p>
+                <p><span data-detail-day-price>0</span>đ/ngày</p>
+              </div>
+            </section>
+
+            <button class="detail-rent-button" type="button" data-add-to-cart>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 4H3v2h2.2l2.1 9.2a2 2 0 0 0 2 1.6h8.8v-2H9.3l-.4-1.8h9.6l2.1-6.2H8.4L7.9 4.6A1 1 0 0 0 7 4Zm4 4h2v2h2v2h-2v2h-2v-2H9v-2h2Z"
+                />
+              </svg>
+              Thuê sản phẩm này
+            </button>
+            <p class="detail-action-feedback" data-detail-feedback hidden></p>
+
+            <section class="detail-card">
+              <div class="detail-card-heading">
+                <h2>Gợi ý thuê cùng</h2>
+                <div class="detail-suggest-actions">
+                  <button type="button" aria-label="Gợi ý trước" data-suggest-prev>
+                    &#10094;
+                  </button>
+                  <button type="button" aria-label="Gợi ý sau" data-suggest-next>
+                    &#10095;
+                  </button>
+                </div>
+              </div>
+
+              <div class="detail-suggest-track" data-suggest-track></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="detail-rich-section" data-detail-rich-section hidden>
+          <h2>Thông tin chi tiết</h2>
+          <div class="detail-rich-content" data-detail-content></div>
+        </section>
+      </div>
+
+      <div class="price-modal" data-price-modal hidden>
+        <div class="price-modal-backdrop" data-price-close></div>
+        <div class="price-modal-card">
+          <button class="price-modal-close" type="button" aria-label="Đóng" data-price-close>
+            ×
+          </button>
+          <h3 data-price-title>Đang tải...</h3>
+
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Số ngày</th>
+                <th>Giá</th>
+              </tr>
+            </thead>
+            <tbody data-price-table-body></tbody>
+          </table>
+
+          <p class="price-modal-note">
+            CHÚ Ý: Trên đây là giá tham khảo, để biết thông tin chi tiết về giá thuê, vui
+            lòng liên hệ.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <site-footer></site-footer>
+    <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/product-detail.js"></script>
+  </body>
+</html>

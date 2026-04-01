@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | FOCUS CAMERA</title>
+    <meta
+      name="description"
+      content="Trang quản trị FOCUS CAMERA để theo dõi đơn thuê, hàng hóa và người thuê."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/images/favicon-focus.svg" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/admin.css" />
+  </head>
+  <body class="subpage-body" data-page="admin">
+    <site-header></site-header>
+
+    <main class="page-shell page-simple admin-page" data-admin-page>
+      <div class="container page-content-wrap">
+        <section class="content-header-block admin-header-block">
+          <div>
+            <h1>Quản trị hệ thống</h1>
+            <ol class="breadcrumb-list">
+              <li><a href="./index.html">Home</a></li>
+              <li>Admin</li>
+            </ol>
+          </div>
+          <a class="admin-header-link" href="./tai-khoan.html">Về tài khoản</a>
+        </section>
+
+        <div class="admin-status" data-admin-status>Đang tải dữ liệu quản trị...</div>
+
+        <section class="admin-summary-grid">
+          <article class="admin-summary-card">
+            <p>Tổng đơn thuê</p>
+            <strong data-summary-orders>0</strong>
+          </article>
+          <article class="admin-summary-card">
+            <p>Đơn chờ xử lý</p>
+            <strong data-summary-pending>0</strong>
+          </article>
+          <article class="admin-summary-card">
+            <p>Người thuê</p>
+            <strong data-summary-renters>0</strong>
+          </article>
+          <article class="admin-summary-card">
+            <p>Hàng hóa</p>
+            <strong data-summary-products>0</strong>
+          </article>
+          <article class="admin-summary-card">
+            <p>Doanh thu tạm tính</p>
+            <strong data-summary-revenue>0 đ</strong>
+          </article>
+        </section>
+
+        <div class="admin-layout">
+          <aside class="admin-sidebar">
+            <button class="admin-nav-item is-active" type="button" data-admin-tab="orders">
+              Quản lý đơn thuê
+            </button>
+            <button class="admin-nav-item" type="button" data-admin-tab="products">
+              Quản lý hàng hóa
+            </button>
+            <button class="admin-nav-item" type="button" data-admin-tab="renters">
+              Thông tin người thuê
+            </button>
+          </aside>
+
+          <section class="admin-content">
+            <section class="admin-panel" data-admin-panel="orders">
+              <div class="admin-panel-head">
+                <div>
+                  <p class="admin-eyebrow">Đơn thuê</p>
+                  <h2>Theo dõi và cập nhật trạng thái đơn</h2>
+                </div>
+                <div class="admin-toolbar">
+                  <input type="search" placeholder="Tìm theo mã đơn, tên, email, điện thoại" data-order-search />
+                  <select data-order-status-filter>
+                    <option value="">Tất cả trạng thái</option>
+                  </select>
+                  <button type="button" data-admin-refresh>Refresh</button>
+                </div>
+              </div>
+              <div class="admin-orders-list" data-admin-orders-list></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="products" hidden>
+              <div class="admin-panel-head">
+                <div>
+                  <p class="admin-eyebrow">Hàng hóa</p>
+                  <h2>Chỉnh nhanh thông tin sản phẩm</h2>
+                </div>
+                <div class="admin-toolbar">
+                  <input type="search" placeholder="Tìm tên sản phẩm hoặc hãng" data-product-search />
+                  <select data-product-category-filter>
+                    <option value="">Tất cả danh mục</option>
+                  </select>
+                </div>
+              </div>
+              <div class="admin-products-table-wrap">
+                <table class="admin-products-table">
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th>Danh mục</th>
+                      <th>Hãng</th>
+                      <th>Giá/ngày</th>
+                      <th>Giá/buổi</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody data-admin-products-body></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="renters" hidden>
+              <div class="admin-panel-head">
+                <div>
+                  <p class="admin-eyebrow">Người thuê</p>
+                  <h2>Thông tin hồ sơ và giấy tờ xác minh</h2>
+                </div>
+                <div class="admin-toolbar">
+                  <input type="search" placeholder="Tìm tên, email, CCCD, số điện thoại" data-renter-search />
+                </div>
+              </div>
+              <div class="admin-renters-grid" data-admin-renters-grid></div>
+            </section>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <div class="admin-product-modal" data-product-modal hidden>
+      <div class="admin-product-modal__backdrop" data-close-product-modal></div>
+      <div class="admin-product-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-product-modal-title">
+        <div class="admin-product-modal__head">
+          <div>
+            <p class="admin-eyebrow">Chi tiết sản phẩm</p>
+            <h2 id="admin-product-modal-title">Xem và chỉnh sửa hàng hóa</h2>
+          </div>
+          <button class="admin-product-modal__close" type="button" aria-label="Đóng" data-close-product-modal>
+            ×
+          </button>
+        </div>
+
+        <div class="admin-product-modal__status" data-product-detail-status hidden></div>
+
+        <div class="admin-product-modal__body" data-product-detail-body>
+          <div class="admin-empty">Chọn một sản phẩm để xem chi tiết.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-renter-modal" data-renter-modal hidden>
+      <div class="admin-renter-modal__backdrop" data-close-renter-modal></div>
+      <div class="admin-renter-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-renter-modal-title">
+        <div class="admin-renter-modal__head">
+          <div>
+            <p class="admin-eyebrow">Chi tiết tài khoản</p>
+            <h2 id="admin-renter-modal-title">Thông tin người thuê</h2>
+          </div>
+          <button class="admin-renter-modal__close" type="button" aria-label="Đóng" data-close-renter-modal>
+            ×
+          </button>
+        </div>
+
+        <div class="admin-renter-modal__body" data-renter-detail-body>
+          <div class="admin-empty">Chọn một tài khoản để xem chi tiết.</div>
+        </div>
+      </div>
+    </div>
+
+    <site-footer></site-footer>
+    <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh mục sản phẩm | FOCUS CAMERA</title>
+    <meta
+      name="description"
+      content="Danh mục sản phẩm cho thuê của FOCUS CAMERA, hỗ trợ lọc nhanh và thêm sản phẩm trực tiếp vào giỏ hàng."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/images/favicon-focus.svg" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body class="subpage-body" data-page="listing">
+    <site-header></site-header>
+
+    <main class="page-shell page-simple">
+      <div class="container page-content-wrap">
+        <section class="content-header-block listing-header">
+          <div>
+            <h1 data-category-title>Thuê Camera (Máy ảnh)</h1>
+            <ol class="breadcrumb-list">
+              <li><a href="./index.html">Home</a></li>
+              <li data-category-breadcrumb>Thuê Camera (Máy ảnh)</li>
+            </ol>
+          </div>
+          <p class="listing-summary" data-product-count>Đang tải sản phẩm...</p>
+        </section>
+
+        <section class="listing-panel" data-product-page>
+          <form class="listing-toolbar" data-filter-form>
+            <div class="listing-filters">
+              <div class="filter-control">
+                <select aria-label="Danh mục thuê" data-filter-category></select>
+              </div>
+              <div class="filter-control">
+                <select aria-label="Hãng sản phẩm" data-filter-company></select>
+              </div>
+              <div class="filter-control">
+                <select aria-label="Sắp xếp giá" data-filter-sort>
+                  <option value="asc">Giá tăng dần</option>
+                  <option value="desc">Giá giảm dần</option>
+                </select>
+              </div>
+              <label class="filter-control filter-search">
+                <input type="search" placeholder="Tìm..." data-filter-search />
+                <span class="search-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M10.5 4a6.5 6.5 0 1 0 3.9 11.7l4 4l1.4-1.4l-4-4A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9a4.5 4.5 0 0 1 0-9Z"
+                    />
+                  </svg>
+                </span>
+              </label>
+            </div>
+            <div class="brand-chip-row" data-brand-chips></div>
+          </form>
+
+          <p class="listing-feedback" data-listing-feedback hidden></p>
+          <div class="listing-loading" data-listing-status>Đang tải sản phẩm...</div>
+          <div class="product-grid" data-product-grid hidden></div>
+        </section>
+      </div>
+    </main>
+
+    <site-footer></site-footer>
+    <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/product-list.js"></script>
+  </body>
+</html>

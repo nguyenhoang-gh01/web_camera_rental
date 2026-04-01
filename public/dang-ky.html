@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký | FOCUS CAMERA</title>
+    <meta
+      name="description"
+      content="Bản clone giao diện trang đăng ký của FOCUS CAMERA, chỉ gồm frontend."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/images/favicon-focus.svg" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body class="subpage-body" data-page="register">
+    <site-header></site-header>
+
+    <main class="page-shell page-simple auth-page-shell">
+      <div class="container page-content-wrap auth-page-wrap">
+        <section class="content-header-block detail-header-block">
+          <h1>Đăng ký</h1>
+          <ol class="breadcrumb-list">
+            <li><a href="./index.html">Home</a></li>
+            <li>Đăng ký</li>
+          </ol>
+        </section>
+
+        <section class="auth-card">
+          <div class="auth-panel auth-panel-register">
+            <span class="auth-kicker">THAM GIA CÙNG FOCUS CAMERA</span>
+            <h2>Tạo tài khoản để sẵn sàng cho luồng thuê thiết bị.</h2>
+            <p>
+              Giao diện này hiện đã chạy cùng backend Node.js cục bộ, thuận tiện để mở rộng
+              thêm xác thực nâng cao, giỏ hàng và lịch sử đơn thuê ở bước tiếp theo.
+            </p>
+
+            <div class="auth-pill-row">
+              <span class="auth-pill">Frontend demo</span>
+              <span class="auth-pill">Luồng rõ ràng</span>
+              <span class="auth-pill">Dễ nối API</span>
+            </div>
+
+            <div class="auth-feature-list">
+              <article class="auth-feature-item">
+                <strong>Thu thập đúng dữ liệu cần thiết</strong>
+                <span>Họ tên, số điện thoại, email và mật khẩu đã được nối với API đăng ký.</span>
+              </article>
+              <article class="auth-feature-item">
+                <strong>Tối ưu cho desktop và mobile</strong>
+                <span>Form chia cột ở màn lớn, tự co về một cột trên màn hình nhỏ.</span>
+              </article>
+              <article class="auth-feature-item">
+                <strong>Giữ ngôn ngữ thương hiệu</strong>
+                <span>Màu đỏ, nền sáng và typography khớp với clone site hiện tại.</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="auth-form-card">
+            <nav class="auth-tabs" aria-label="Điều hướng tài khoản">
+              <a href="./dang-nhap.html">Đăng nhập</a>
+              <a href="./dang-ky.html" class="is-active">Đăng ký</a>
+            </nav>
+
+            <h2>Tạo tài khoản mới</h2>
+            <p>Điền thông tin bên dưới để chuẩn bị sẵn cho quy trình thuê sau này.</p>
+
+            <form action="#" novalidate data-register-form>
+              <div class="auth-form-status" data-auth-status hidden></div>
+              <div class="auth-grid auth-grid-two">
+                <label class="auth-field">
+                  <span>Họ và tên</span>
+                  <input type="text" name="fullName" placeholder="Nguyễn Văn A" />
+                </label>
+
+                <label class="auth-field">
+                  <span>Số điện thoại</span>
+                  <input type="tel" name="phone" placeholder="0345 878 879" />
+                </label>
+
+                <label class="auth-field">
+                  <span>Email</span>
+                  <input type="email" name="email" placeholder="email@domain.com" />
+                </label>
+
+                <label class="auth-field">
+                  <span>Mật khẩu</span>
+                  <input type="password" name="password" placeholder="Tạo mật khẩu" />
+                </label>
+              </div>
+
+              <div class="auth-grid">
+                <label class="auth-field">
+                  <span>Nhập lại mật khẩu</span>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Nhập lại mật khẩu"
+                  />
+                </label>
+              </div>
+
+              <div class="auth-inline auth-inline-stack">
+                <label class="auth-check">
+                  <input type="checkbox" name="acceptTerms" />
+                  <span>Tôi đồng ý với chính sách và điều khoản sử dụng giao diện demo.</span>
+                </label>
+              </div>
+
+              <button class="auth-submit" type="submit">Tạo tài khoản</button>
+
+              <p class="auth-note">
+                Trang đăng ký hiện lưu dữ liệu qua backend Node.js và MySQL local để tiện phát triển tiếp.
+              </p>
+            </form>
+
+            <p class="auth-meta">
+              Đã có tài khoản?
+              <a href="./dang-nhap.html">Quay về đăng nhập</a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <site-footer></site-footer>
+    <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/auth.js"></script>
+  </body>
+</html>

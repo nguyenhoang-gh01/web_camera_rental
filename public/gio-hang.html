@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng | FOCUS CAMERA</title>
+    <meta
+      name="description"
+      content="Giỏ hàng thuê thiết bị tại FOCUS CAMERA, tối ưu cho việc kiểm tra sản phẩm, điều chỉnh thời gian thuê và chuẩn bị chốt đơn."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/images/favicon-focus.svg" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body class="subpage-body" data-page="cart">
+    <site-header></site-header>
+
+    <main class="page-shell page-simple" data-cart-page>
+      <div class="container page-content-wrap cart-page-wrap">
+        <section class="content-header-block">
+          <h1>Giỏ hàng</h1>
+          <ol class="breadcrumb-list">
+            <li><a href="./index.html">Home</a></li>
+            <li>Giỏ hàng</li>
+          </ol>
+        </section>
+
+        <section class="cart-content cart-shell">
+          <div class="cart-status" data-cart-status>Đang tải giỏ hàng...</div>
+
+          <div class="cart-layout" data-cart-layout hidden>
+            <section class="cart-main-panel">
+              <div class="cart-panel-head">
+                <div>
+                  <p class="cart-eyebrow">Danh sách thuê</p>
+                  <h2>Thiết bị bạn đã chọn</h2>
+                </div>
+                <p class="cart-count" data-cart-count>0 sản phẩm</p>
+              </div>
+
+              <div class="cart-list" data-cart-list></div>
+
+              <section class="cart-empty-state" data-cart-empty hidden>
+                <div class="cart-empty-illustration">FC</div>
+                <h3>Giỏ hàng của bạn đang trống</h3>
+                <p>
+                  Hãy thêm thiết bị phù hợp để bắt đầu tạo lịch thuê cho dự án của bạn.
+                </p>
+                <a class="cart-empty-link" href="./danh-muc.html?category=thue-camera-may-anh">
+                  Khám phá danh mục thuê
+                </a>
+              </section>
+            </section>
+
+            <aside class="cart-summary-panel">
+              <div class="cart-summary-card">
+                <p class="cart-eyebrow">Tổng quan</p>
+                <h2>Đơn thuê tạm tính</h2>
+
+                <dl class="cart-summary-list">
+                  <div>
+                    <dt>Số sản phẩm</dt>
+                    <dd data-cart-summary-count>0</dd>
+                  </div>
+                  <div>
+                    <dt>Tạm tính</dt>
+                    <dd data-cart-subtotal>0 đ</dd>
+                  </div>
+                  <div class="is-total">
+                    <dt>Tổng thanh toán</dt>
+                    <dd data-cart-total>0 đ</dd>
+                  </div>
+                </dl>
+
+                <form class="cart-coupon-form" data-cart-coupon-form>
+                  <label class="cart-coupon-label" for="cart-coupon">Mã giảm giá</label>
+                  <div class="cart-coupon-row">
+                    <input id="cart-coupon" name="coupon" type="text" placeholder="Nhập mã của bạn" />
+                    <button type="submit">Kiểm tra</button>
+                  </div>
+                  <p class="cart-coupon-note" data-cart-coupon-note>
+                    Khuyến mãi sẽ được nâng cấp tiếp cùng backend đơn thuê.
+                  </p>
+                </form>
+
+                <button class="cart-checkout-button" type="button" data-cart-checkout>
+                  Thuê ngay
+                </button>
+
+                <ul class="cart-support-list">
+                  <li>Linh hoạt chỉnh ngày bắt đầu và thời lượng thuê ngay trong giỏ.</li>
+                  <li>Giá hiển thị là tạm tính theo cấu hình hiện tại của bạn.</li>
+                  <li>Đội ngũ FOCUS CAMERA sẽ xác nhận lại tình trạng thiết bị trước khi bàn giao.</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <site-footer></site-footer>
+    <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/cart.js"></script>
+  </body>
+</html>
