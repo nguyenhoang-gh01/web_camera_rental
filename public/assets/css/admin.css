@@ -434,6 +434,10 @@
   gap: 8px;
 }
 
+.admin-product-delete {
+  background: linear-gradient(135deg, #c83232 0%, #8f1d1d 100%);
+}
+
 .admin-product-modal {
   inset: 0;
   position: fixed;
@@ -668,6 +672,7 @@
 }
 
 .admin-product-form__field input,
+.admin-product-form__field select,
 .admin-product-form__field textarea {
   background: #ffffff;
   border: 1px solid #ddd3cb;
@@ -685,10 +690,97 @@
   resize: vertical;
 }
 
+.admin-product-form__field input[type="file"] {
+  min-height: auto;
+  padding: 12px 14px;
+}
+
 .admin-product-form__field input:focus,
+.admin-product-form__field select:focus,
 .admin-product-form__field textarea:focus {
   border-color: rgba(239, 43, 45, 0.42);
   box-shadow: 0 0 0 3px rgba(239, 43, 45, 0.08);
+}
+
+.admin-product-image-manager {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-product-help {
+  color: #736862;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.admin-product-upload-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.admin-product-upload-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.admin-product-upload-item {
+  background: #fcfaf7;
+  border: 1px solid #ece4dd;
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.admin-product-upload-item img {
+  aspect-ratio: 1 / 1;
+  background: #ffffff;
+  border: 1px solid #ece4dd;
+  border-radius: 14px;
+  object-fit: contain;
+  width: 100%;
+}
+
+.admin-product-upload-item__meta {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-product-upload-item__meta span {
+  color: #4d4540;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-product-upload-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-product-upload-item__actions button {
+  background: #ffffff;
+  border: 1px solid #ddd3cb;
+  border-radius: 999px;
+  color: #332d2a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.admin-product-upload-item__actions button:last-child {
+  background: #fff1f1;
+  border-color: #efc1c1;
+  color: #a03030;
 }
 
 .admin-product-meta {

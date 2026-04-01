@@ -1,14 +1,13 @@
 const SITE_CONTENT = Object.freeze({
   name: "FOCUS CAMERA",
   slogan: "Focus Camera – Focus on You",
-  phoneRaw: "0345878879",
-  phoneDisplay: "0345.878.879",
-  email: "hello@focuscamera.vn",
-  addressDisplay: "132 Nguyễn Đức Trung - Thanh Khê - TP. Đà Nẵng",
+  phoneRaw: "0123456789",
+  phoneDisplay: "0123.456.789",
+  addressDisplay: "Số 102 Xô Viết Nghệ Tĩnh, Hòa Cường, Đà Nẵng",
+  fanpageLabel: "FOCUS CAMERA - Cho thuê máy ảnh, lens, phụ kiện ở Đà Nẵng",
+  fanpageHref: "#",
   appStoreImage: "https://dathanhcamera.com/assets/img/appstore.svg",
   playStoreImage: "https://dathanhcamera.com/assets/img/googleplay.svg",
-  footerCreditHref: "https://theanh.top",
-  footerCreditName: "Theanhit",
 });
 
 window.SITE_CONTENT = SITE_CONTENT;
@@ -70,6 +69,7 @@ function buildAccountNav(storedUser, accountActive) {
 }
 
 function buildHeader(page) {
+  const aboutActive = page === "about";
   const serviceActive = page === "listing" || page === "detail";
   const policyActive = page === "policy";
   const contactActive = page === "contact";
@@ -95,7 +95,9 @@ function buildHeader(page) {
         </button>
 
         <a class="brand" href="./index.html" aria-label="${SITE_CONTENT.name}">
-          <span class="brand-mark" aria-hidden="true">FC</span>
+          <span class="brand-mark" aria-hidden="true">
+            <img src="./assets/images/icon_web_index.png" alt="" class="brand-logo-image" />
+          </span>
           <span class="brand-copy">
             <span class="brand-name">${SITE_CONTENT.name}</span>
             <span class="brand-tagline">${SITE_CONTENT.slogan}</span>
@@ -103,6 +105,7 @@ function buildHeader(page) {
         </a>
 
         <nav class="main-nav" data-menu>
+          <a href="./gioi-thieu.html"${aboutActive ? ' class="nav-link-active"' : ""}>Giới thiệu</a>
           <div class="nav-item has-dropdown">
             <button type="button" class="nav-trigger${serviceActive ? " nav-link-active" : ""}">
               Dịch vụ cho thuê
@@ -110,7 +113,6 @@ function buildHeader(page) {
             </button>
             <div class="dropdown-menu">
               <a href="./danh-muc.html?category=thue-camera-may-anh">Thuê Camera (Máy ảnh)</a>
-              <a href="./danh-muc.html?category=thue-lens-ong-kinh">Thuê Lens (Ống kính)</a>
               <a href="./danh-muc.html?category=thue-phu-kien">Thuê Phụ kiện</a>
             </div>
           </div>
@@ -145,7 +147,9 @@ function buildFooter() {
       <div class="footer-main">
         <div class="container footer-inner">
           <a class="footer-brand" href="./index.html" aria-label="${SITE_CONTENT.name}">
-            <span class="footer-brand-mark" aria-hidden="true">FC</span>
+            <span class="footer-brand-mark" aria-hidden="true">
+              <img src="./assets/images/icon_web_index.png" alt="" class="footer-brand-logo-image" />
+            </span>
             <span class="footer-brand-copy">
               <span class="footer-brand-name">${SITE_CONTENT.name}</span>
               <span class="footer-brand-slogan">${SITE_CONTENT.slogan}</span>
@@ -153,15 +157,12 @@ function buildFooter() {
           </a>
 
           <div class="footer-about">
-            <h3>Liên hệ ${SITE_CONTENT.name}</h3>
             <p class="footer-slogan">${SITE_CONTENT.slogan}</p>
-            <p>Địa chỉ: ${SITE_CONTENT.addressDisplay}</p>
             <p>
-              SDT:
+              Hotline:
               <a href="tel:${SITE_CONTENT.phoneRaw}">${SITE_CONTENT.phoneDisplay}</a>
-              - Email:
-              <a href="mailto:${SITE_CONTENT.email}">${SITE_CONTENT.email}</a>
             </p>
+            <p>Địa chỉ: ${SITE_CONTENT.addressDisplay}</p>
           </div>
 
           <div class="store-badges">
@@ -177,13 +178,6 @@ function buildFooter() {
             />
           </div>
         </div>
-      </div>
-
-      <div class="footer-bottom container">
-        <strong>
-          ${new Date().getFullYear()} Liên hệ thiết kế website:
-          <a href="${SITE_CONTENT.footerCreditHref}" target="_blank" rel="noreferrer">${SITE_CONTENT.footerCreditName}</a>
-        </strong>
       </div>
     </footer>
   `;

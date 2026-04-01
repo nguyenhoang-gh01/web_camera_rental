@@ -10,13 +10,6 @@ if (productPage) {
         "https://api.dathanhcamera.com/image/category/5c3cbcdd3c05d76fb8f17e41213be0fcd3193c3b268c79b2f1.jpeg",
     },
     {
-      id: 5,
-      slug: "thue-lens-ong-kinh",
-      name: "Thuê Lens (Ống kính)",
-      fallbackImage:
-        "https://api.dathanhcamera.com/image/category/a1c2d01ca7e13205eaee2af1d4415b6f78e374e883a661761b.jpeg",
-    },
-    {
       id: 6,
       slug: "thue-phu-kien",
       name: "Thuê Phụ kiện",
@@ -86,8 +79,15 @@ if (productPage) {
 
   const formatPrice = (value) => numberFormatter.format(Math.round(Number(value) || 0));
 
-  const getSessionPrice = (fullDayPrice) =>
-    Math.round(((Number(fullDayPrice) || 0) * 0.7) / 1000) * 1000;
+  const getSessionPrice = (product) => {
+    const sessionPrice = Number(product?.sessionPrice);
+
+    if (Number.isFinite(sessionPrice) && sessionPrice >= 0) {
+      return sessionPrice;
+    }
+
+    return Math.round(((Number(product?.price) || 0) * 0.7) / 1000) * 1000;
+  };
 
   const getProductImage = (product) =>
     product.thumbnailUrl ||
@@ -244,7 +244,7 @@ if (productPage) {
 
             <div class="product-price">
               <div class="product-price-group">
-                <p>${formatPrice(getSessionPrice(product.price))} <span>đ/buổi</span></p>
+                <p>${formatPrice(getSessionPrice(product))} <span>đ/buổi</span></p>
                 <p>${formatPrice(product.price)} <span>đ/ngày</span></p>
               </div>
 

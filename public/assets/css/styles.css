@@ -84,17 +84,16 @@ site-footer {
 
 .brand-mark {
   align-items: center;
-  background: linear-gradient(135deg, #ff5858, #d41414);
-  border-radius: 14px;
-  color: #ffffff;
   display: inline-flex;
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 800;
   height: 44px;
   justify-content: center;
-  letter-spacing: 0.04em;
   line-height: 1;
+  width: 44px;
+}
+
+.brand-logo-image {
+  height: 44px;
+  object-fit: contain;
   width: 44px;
 }
 
@@ -601,6 +600,32 @@ site-footer {
 
 .policy-content strong {
   font-weight: 700;
+}
+
+.about-content {
+  background: #ffffff;
+  border: 1px solid #ece5dc;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+  padding: 28px 32px;
+}
+
+.about-content h2 {
+  margin-bottom: 18px;
+}
+
+.about-content p {
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.about-content ul {
+  margin: 0 0 18px;
+  padding-left: 22px;
+}
+
+.about-content li {
+  margin-bottom: 10px;
 }
 
 .contact-content {
@@ -2574,17 +2599,16 @@ body.modal-open {
 
 .footer-brand-mark {
   align-items: center;
-  background: linear-gradient(135deg, #ff5858, #d41414);
-  border-radius: 18px;
-  color: #ffffff;
   display: inline-flex;
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 800;
   height: 58px;
   justify-content: center;
-  letter-spacing: 0.04em;
   line-height: 1;
+  width: 58px;
+}
+
+.footer-brand-logo-image {
+  height: 58px;
+  object-fit: contain;
   width: 58px;
 }
 
@@ -2686,7 +2710,11 @@ body.modal-open {
   }
 
   .brand-mark {
-    font-size: 16px;
+    height: 38px;
+    width: 38px;
+  }
+
+  .brand-logo-image {
     height: 38px;
     width: 38px;
   }
@@ -2922,7 +2950,11 @@ body.modal-open {
 
   .brand-mark {
     border-radius: 12px;
-    font-size: 14px;
+    height: 32px;
+    width: 32px;
+  }
+
+  .brand-logo-image {
     height: 32px;
     width: 32px;
   }
@@ -2966,7 +2998,11 @@ body.modal-open {
   }
 
   .footer-brand-mark {
-    font-size: 18px;
+    height: 48px;
+    width: 48px;
+  }
+
+  .footer-brand-logo-image {
     height: 48px;
     width: 48px;
   }
@@ -3159,6 +3195,15 @@ body.modal-open {
 
   .policy-content h2 {
     font-size: 24px;
+  }
+
+  .about-content {
+    padding: 22px 18px;
+  }
+
+  .about-content p {
+    font-size: 16px;
+    line-height: 1.7;
   }
 
   .hero-arrow {

@@ -120,7 +120,7 @@ app.get("/api/admin/dashboard", async (request, response) => {
     return;
   }
 
-  const [summary, orders, products, renters] = await Promise.all([
+  const [summary, orders, products, renters, categories, companies] = await Promise.all([
     adminService.getDashboardSummary(),
     adminService.listOrders({
       status: String(request.query.orderStatus || ""),
@@ -133,6 +133,8 @@ app.get("/api/admin/dashboard", async (request, response) => {
     adminService.listRenters({
       search: String(request.query.renterSearch || ""),
     }),
+    adminService.listCatalogCategories(),
+    adminService.listCatalogCompanies(),
   ]);
 
   response.json({
@@ -141,6 +143,8 @@ app.get("/api/admin/dashboard", async (request, response) => {
     orders,
     products,
     renters,
+    categories,
+    companies,
   });
 });
 
@@ -160,6 +164,21 @@ app.patch("/api/admin/orders/:orderId", async (request, response) => {
     response.json({ order });
   } catch (error) {
     response.status(400).json({ error: error.message || "Không thể cập nhật đơn thuê." });
+  }
+});
+
+app.post("/api/admin/products", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const product = await adminService.createProduct(request.body);
+    response.status(201).json({ product });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể tạo sản phẩm." });
   }
 });
 
@@ -197,6 +216,36 @@ app.get("/api/admin/products/:productId", async (request, response) => {
   }
 
   response.json({ product });
+});
+
+app.delete("/api/admin/products/:productId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const deleted = await adminService.deleteProduct(request.params.productId);
+    response.json({ deleted });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể xóa sản phẩm." });
+  }
+});
+
+app.post("/api/admin/uploads/product-image", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const upload = await adminService.uploadProductImage(request.body.file);
+    response.status(201).json(upload);
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể tải ảnh sản phẩm lên." });
+  }
 });
 
 app.post("/api/auth/register", async (request, response) => {

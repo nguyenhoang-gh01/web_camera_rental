@@ -5,12 +5,10 @@ if (productDetailPage) {
   const SHARED_DETAIL_PATH = "./chi-tiet-san-pham.html";
   const CATEGORY_LABELS = {
     1: "Thuê Camera (Máy ảnh)",
-    5: "Thuê Lens (Ống kính)",
     6: "Thuê Phụ kiện",
   };
   const CATEGORY_FALLBACK_IMAGES = {
     1: "https://api.dathanhcamera.com/image/category/5c3cbcdd3c05d76fb8f17e41213be0fcd3193c3b268c79b2f1.jpeg",
-    5: "https://api.dathanhcamera.com/image/category/a1c2d01ca7e13205eaee2af1d4415b6f78e374e883a661761b.jpeg",
     6: "https://api.dathanhcamera.com/image/category/534273b8dd29a62bbc85f0de4f05e2a0f7feb51b3a27ae6cf3.jpeg",
   };
 
@@ -80,8 +78,15 @@ if (productDetailPage) {
 
   const formatPrice = (value) => numberFormatter.format(Math.round(Number(value) || 0));
 
-  const getSessionPrice = (fullDayPrice) =>
-    Math.round(((Number(fullDayPrice) || 0) * 0.7) / 1000) * 1000;
+  const getSessionPrice = (product) => {
+    const sessionPrice = Number(product?.sessionPrice);
+
+    if (Number.isFinite(sessionPrice) && sessionPrice >= 0) {
+      return sessionPrice;
+    }
+
+    return Math.round(((Number(product?.price) || 0) * 0.7) / 1000) * 1000;
+  };
 
   const getCategoryLabel = (categoryId) =>
     CATEGORY_LABELS[Number(categoryId)] || "Chi tiết sản phẩm";
@@ -196,7 +201,7 @@ if (productDetailPage) {
           <a class="detail-suggest-card" href="${buildDetailLink(item.slug)}">
             <img src="${imageUrl}" alt="${escapeHtml(item.name)}" loading="lazy" />
             <h3>${escapeHtml(item.name)}</h3>
-            <p>${formatPrice(getSessionPrice(item.price))}đ/buổi</p>
+            <p>${formatPrice(getSessionPrice(item))}đ/buổi</p>
             <p>${formatPrice(item.price)}đ/ngày</p>
           </a>
         `;
@@ -215,7 +220,7 @@ if (productDetailPage) {
       state.product.description || "<p>Đang cập nhật thông tin nổi bật.</p>";
     elements.content.innerHTML =
       state.product.detail || "<p>Đang cập nhật thông tin chi tiết sản phẩm.</p>";
-    elements.sessionPrice.textContent = formatPrice(getSessionPrice(state.product.price));
+    elements.sessionPrice.textContent = formatPrice(getSessionPrice(state.product));
     elements.dayPrice.textContent = formatPrice(state.product.price);
 
     renderGallery();
