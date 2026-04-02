@@ -7,6 +7,17 @@ if (accountPage) {
     form: document.querySelector("[data-account-form]"),
     passwordForm: document.querySelector("[data-password-form]"),
     historyList: document.querySelector("[data-rental-history-list]"),
+    paymentModal: document.querySelector("[data-payment-modal]"),
+    paymentQr: document.querySelector("[data-payment-qr]"),
+    paymentOrderCode: document.querySelector("[data-payment-order-code]"),
+    paymentBankName: document.querySelector("[data-payment-bank-name]"),
+    paymentAccountNumber: document.querySelector("[data-payment-account-number]"),
+    paymentAccountName: document.querySelector("[data-payment-account-name]"),
+    paymentAmount: document.querySelector("[data-payment-amount]"),
+    paymentContent: document.querySelector("[data-payment-content]"),
+    paymentNote: document.querySelector("[data-payment-note]"),
+    paymentCloseButtons: document.querySelectorAll("[data-payment-close]"),
+    paymentCopyButtons: document.querySelectorAll("[data-payment-copy]"),
     panels: document.querySelectorAll("[data-account-panel]"),
     tabButtons: document.querySelectorAll("[data-account-tab]"),
     readyPill: document.querySelector("[data-account-ready-pill]"),
@@ -34,9 +45,49 @@ if (accountPage) {
 
   const numberFormatter = new Intl.NumberFormat("vi-VN");
   let profileState = null;
+  let rentalOrders = [];
+  let activePaymentOrder = null;
+  const autoOpenOrderId = new URLSearchParams(window.location.search).get("order") || "";
 
   function formatPrice(value) {
     return `${numberFormatter.format(Math.round(Number(value) || 0))} đ`;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (character) => {
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+
+      return entities[character] || character;
+    });
+  }
+
+  function formatRentalDuration(value) {
+    const rentalDays = Number(value) || 0;
+    return rentalDays === 0.5 ? "1 buổi" : `${numberFormatter.format(rentalDays)} ngày`;
+  }
+
+  function formatOrderStatus(status) {
+    const normalizedStatus = String(status || "").toLowerCase();
+    const labels = {
+      pending: "Chờ xác nhận",
+      confirmed: "Đã xác nhận",
+      completed: "Hoàn tất",
+      cancelled: "Đã hủy",
+    };
+
+    return labels[normalizedStatus] || "Đang xử lý";
+  }
+
+  function clearAutoOpenOrderParam() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("order");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
   }
 
   function getTabFromHash() {
@@ -167,10 +218,87 @@ if (accountPage) {
     setPreviewFromUrl(previewKey, documentInfo.filePath, documentInfo.originalName);
   }
 
+  function setPaymentModal(order) {
+    activePaymentOrder = order || null;
+
+    if (!order?.payment) {
+      return;
+    }
+
+    elements.paymentOrderCode.textContent = order.orderCode || "Đơn thuê";
+    elements.paymentBankName.textContent = order.payment.bankName || "MB Bank";
+    elements.paymentAccountNumber.textContent =
+      order.payment.accountNumberDisplay || order.payment.accountNumber || "";
+    elements.paymentAccountName.textContent = order.payment.accountName || "";
+    elements.paymentAmount.textContent = formatPrice(order.payment.amount || 0);
+    elements.paymentContent.textContent = order.payment.transferContent || "";
+    elements.paymentQr.src = order.payment.qrUrl || "";
+    elements.paymentQr.alt = `Mã QR thanh toán cho đơn ${order.orderCode || ""}`.trim();
+    elements.paymentNote.textContent =
+      "Vui lòng chuyển khoản đúng số tiền và đúng nội dung để Focus Camera xác nhận đơn thuê nhanh hơn.";
+  }
+
+  function openPaymentModal(order) {
+    if (!order?.payment || !elements.paymentModal) {
+      return;
+    }
+
+    setPaymentModal(order);
+    elements.paymentModal.hidden = false;
+    document.body.classList.add("modal-open");
+  }
+
+  function closePaymentModal() {
+    if (!elements.paymentModal) {
+      return;
+    }
+
+    elements.paymentModal.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+
+  async function copyPaymentField(field) {
+    if (!activePaymentOrder?.payment) {
+      return;
+    }
+
+    const textToCopy =
+      field === "accountNumber"
+        ? activePaymentOrder.payment.accountNumberDisplay || activePaymentOrder.payment.accountNumber || ""
+        : activePaymentOrder.payment.transferContent || "";
+
+    if (!textToCopy) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setStatus("Đã sao chép thông tin thanh toán.", "success");
+    } catch (error) {
+      setStatus("Không thể sao chép tự động. Vui lòng thử lại.", "error");
+    }
+  }
+
+  function maybeOpenLatestPaymentQr() {
+    if (!autoOpenOrderId || !rentalOrders.length) {
+      return;
+    }
+
+    const matchedOrder = rentalOrders.find((order) => order.id === autoOpenOrderId);
+
+    if (matchedOrder) {
+      activateTab("history");
+      openPaymentModal(matchedOrder);
+      clearAutoOpenOrderParam();
+    }
+  }
+
   function renderHistory(orders = []) {
     if (!elements.historyList) {
       return;
     }
+
+    rentalOrders = orders;
 
     if (!orders.length) {
       elements.historyList.innerHTML = `
@@ -189,8 +317,8 @@ if (accountPage) {
               <article class="account-history-item">
                 <img src="${item.imageUrl || ""}" alt="${item.productName}" loading="lazy" />
                 <div>
-                  <h4>${item.productName}</h4>
-                  <p>${item.rentalDays} ngày • Nhận thiết bị: ${new Date(item.rentalStart).toLocaleString("vi-VN")}</p>
+                  <h4>${escapeHtml(item.productName)}</h4>
+                  <p>${formatRentalDuration(item.rentalDays)} • Nhận thiết bị: ${new Date(item.rentalStart).toLocaleString("vi-VN")}</p>
                 </div>
                 <strong>${formatPrice(item.totalPrice)}</strong>
               </article>
@@ -202,12 +330,19 @@ if (accountPage) {
           <section class="account-history-card">
             <div class="account-history-head">
               <div>
-                <h3>${order.orderCode}</h3>
+                <h3>${escapeHtml(order.orderCode)}</h3>
                 <p>Tạo lúc ${new Date(order.createdAt).toLocaleString("vi-VN")}</p>
               </div>
               <div class="account-history-meta">
-                <span class="account-history-status">${order.status}</span>
+                <span class="account-history-status">${formatOrderStatus(order.status)}</span>
                 <strong>${formatPrice(order.totalPrice)}</strong>
+                <button
+                  class="account-history-payment-button"
+                  type="button"
+                  data-order-payment="${order.id}"
+                >
+                  Mở QR chuyển khoản
+                </button>
               </div>
             </div>
             <div class="account-history-items">
@@ -217,6 +352,8 @@ if (accountPage) {
         `;
       })
       .join("");
+
+    maybeOpenLatestPaymentQr();
   }
 
   function renderProfile(data) {
@@ -378,6 +515,29 @@ if (accountPage) {
     window.location.href = "./dang-nhap.html";
   }
 
+  elements.historyList?.addEventListener("click", (event) => {
+    const paymentButton = event.target.closest("[data-order-payment]");
+
+    if (!paymentButton) {
+      return;
+    }
+
+    const order = rentalOrders.find((item) => item.id === paymentButton.dataset.orderPayment);
+    if (order) {
+      openPaymentModal(order);
+    }
+  });
+
+  elements.paymentCloseButtons.forEach((button) => {
+    button.addEventListener("click", closePaymentModal);
+  });
+
+  elements.paymentCopyButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      copyPaymentField(button.dataset.paymentCopy);
+    });
+  });
+
   ["cccdFront", "cccdBack", "personalOther"].forEach((key) => {
     const field = elements.form?.querySelector(`[name="${key}"]`);
 
@@ -410,6 +570,12 @@ if (accountPage) {
 
   window.addEventListener("hashchange", () => {
     activateTab(getTabFromHash(), false);
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !elements.paymentModal?.hidden) {
+      closePaymentModal();
+    }
   });
 
   activateTab(getTabFromHash(), false);

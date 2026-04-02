@@ -70,6 +70,7 @@ function buildAccountNav(storedUser, accountActive) {
 
 function buildHeader(page) {
   const aboutActive = page === "about";
+  const guideActive = page === "guide";
   const serviceActive = page === "listing" || page === "detail";
   const policyActive = page === "policy";
   const contactActive = page === "contact";
@@ -106,6 +107,7 @@ function buildHeader(page) {
 
         <nav class="main-nav" data-menu>
           <a href="./gioi-thieu.html"${aboutActive ? ' class="nav-link-active"' : ""}>Giới thiệu</a>
+          <a href="./huong-dan.html"${guideActive ? ' class="nav-link-active"' : ""}>Hướng dẫn</a>
           <div class="nav-item has-dropdown">
             <button type="button" class="nav-trigger${serviceActive ? " nav-link-active" : ""}">
               Dịch vụ cho thuê

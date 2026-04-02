@@ -1,6 +1,13 @@
 const crypto = require("crypto");
 const { getPool } = require("../database/connection");
 
+const PAYMENT_BANK_ID = "mbbank";
+const PAYMENT_BANK_NAME = "MB Bank (Ngân hàng Quân Đội)";
+const PAYMENT_ACCOUNT_NUMBER = "22345235872";
+const PAYMENT_ACCOUNT_DISPLAY = "2.2345.235872";
+const PAYMENT_ACCOUNT_NAME = "Nguyễn Thị Ngọc";
+const PAYMENT_QR_TEMPLATE = "compact2";
+
 function toIsoString(value) {
   const date = value instanceof Date ? value : new Date(value);
   return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
@@ -13,6 +20,27 @@ function formatOrderCode() {
   const day = String(now.getDate()).padStart(2, "0");
   const suffix = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
   return `FC${year}${month}${day}-${suffix}`;
+}
+
+function buildPaymentInfo(orderCode, totalPrice) {
+  const amount = Math.max(0, Math.round(Number(totalPrice) || 0));
+  const transferContent = `Thanh toán đơn ${orderCode}`;
+  const qrUrl =
+    `https://img.vietqr.io/image/${PAYMENT_BANK_ID}-${PAYMENT_ACCOUNT_NUMBER}-${PAYMENT_QR_TEMPLATE}.png` +
+    `?amount=${encodeURIComponent(amount)}` +
+    `&addInfo=${encodeURIComponent(transferContent)}` +
+    `&accountName=${encodeURIComponent(PAYMENT_ACCOUNT_NAME)}`;
+
+  return {
+    bankId: PAYMENT_BANK_ID,
+    bankName: PAYMENT_BANK_NAME,
+    accountNumber: PAYMENT_ACCOUNT_NUMBER,
+    accountNumberDisplay: PAYMENT_ACCOUNT_DISPLAY,
+    accountName: PAYMENT_ACCOUNT_NAME,
+    transferContent,
+    amount,
+    qrUrl,
+  };
 }
 
 async function getCartForCheckout(connection, token, userId) {
@@ -106,6 +134,7 @@ function groupOrders(orderRows, itemRows) {
     totalPrice: Number(order.total_price) || 0,
     createdAt: toIsoString(order.created_at),
     updatedAt: toIsoString(order.updated_at),
+    payment: buildPaymentInfo(order.order_code, order.total_price),
     items: itemRows
       .filter((item) => item.order_id === order.id)
       .map((item) => ({

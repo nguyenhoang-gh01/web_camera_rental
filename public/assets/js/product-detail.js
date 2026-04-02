@@ -42,7 +42,6 @@ if (productDetailPage) {
   const state = {
     product: null,
     images: [],
-    priceRules: [],
     suggestions: [],
     activeIndex: 0,
   };
@@ -98,6 +97,34 @@ if (productDetailPage) {
   const getProductImageUrl = (imageUrl, categoryId) => imageUrl || getFallbackImage(categoryId);
 
   const getCompanyLogoUrl = (imageUrl) => imageUrl || "";
+
+  const getRentalPriceRows = (product) => {
+    const dayPrice = Number(product?.price) || 0;
+    const sessionPrice = getSessionPrice(product);
+
+    return [
+      {
+        label: "1 buổi",
+        price: sessionPrice,
+      },
+      {
+        label: "1 ngày",
+        price: dayPrice,
+      },
+      {
+        label: "2 ngày",
+        price: dayPrice * 2,
+      },
+      {
+        label: "3 ngày",
+        price: dayPrice * 3,
+      },
+      {
+        label: "6 ngày",
+        price: dayPrice * 6,
+      },
+    ];
+  };
 
   const setStatus = (message, error = false) => {
     elements.status.hidden = false;
@@ -164,21 +191,15 @@ if (productDetailPage) {
   };
 
   const renderPriceTable = () => {
-    const rows = state.priceRules.length
-      ? state.priceRules
-      : [{ total: 1, percent: "100" }];
+    const rows = getRentalPriceRows(state.product);
 
     elements.priceTitle.textContent = state.product.name || "Chi tiết giá thuê";
     elements.priceTableBody.innerHTML = rows
       .map((rule) => {
-        const priceByDay = Math.round(
-          ((Number(state.product.price) || 0) * Number(rule.percent || 0)) / 100
-        );
-
         return `
           <tr>
-            <td>${escapeHtml(rule.total)}</td>
-            <td>${formatPrice(priceByDay)} đ/ngày</td>
+            <td>${escapeHtml(rule.label)}</td>
+            <td>${formatPrice(rule.price)} đ</td>
           </tr>
         `;
       })
@@ -238,13 +259,6 @@ if (productDetailPage) {
     return json?.product || null;
   };
 
-  const fetchPriceRules = async () => {
-    const response = await fetch("/api/price-rules");
-    const json = await response.json();
-    const rules = Array.isArray(json?.priceRules) ? json.priceRules : [];
-    return rules.sort((first, second) => Number(first.total) - Number(second.total));
-  };
-
   const fetchSuggestions = async (slug) => {
     const response = await fetch(`/api/products/${encodeURIComponent(slug)}/suggestions`);
     const json = await response.json();
@@ -261,14 +275,10 @@ if (productDetailPage) {
         throw new Error("Missing product data");
       }
 
-      const [priceRules, suggestions] = await Promise.all([
-        fetchPriceRules(),
-        fetchSuggestions(product.slug),
-      ]);
+      const suggestions = await fetchSuggestions(product.slug);
 
       state.product = product;
       state.images = parseImages(product.images);
-      state.priceRules = priceRules;
       state.suggestions = suggestions;
       state.activeIndex = 0;
 

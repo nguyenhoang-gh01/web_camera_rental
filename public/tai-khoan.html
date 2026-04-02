@@ -205,6 +205,89 @@
           </section>
         </div>
       </div>
+
+      <div class="cart-payment-modal" data-payment-modal hidden>
+        <div class="cart-payment-backdrop" data-payment-close></div>
+        <div class="cart-payment-card">
+          <div class="cart-payment-header">
+            <div class="cart-payment-title">
+              <span class="cart-payment-title-mark" aria-hidden="true">💳</span>
+              <div>
+                <h2>Thanh toán</h2>
+                <p data-payment-order-code>Đơn thuê</p>
+              </div>
+            </div>
+            <button class="cart-payment-close" type="button" aria-label="Đóng" data-payment-close>
+              ×
+            </button>
+          </div>
+
+          <div class="cart-payment-body">
+            <section class="cart-payment-qr-panel">
+              <div class="cart-payment-section-title">
+                <span aria-hidden="true">🧾</span>
+                <h3>Chuyển khoản qua QR Code</h3>
+              </div>
+
+              <div class="cart-payment-qr-frame">
+                <img src="" alt="Mã QR thanh toán VietQR" data-payment-qr />
+              </div>
+
+              <p class="cart-payment-qr-note">Quét mã QR để chuyển khoản</p>
+            </section>
+
+            <section class="cart-payment-info-panel">
+              <div class="cart-payment-section-title">
+                <span aria-hidden="true">🏦</span>
+                <h3>Thông tin chuyển khoản</h3>
+              </div>
+
+              <div class="cart-payment-info-card">
+                <div class="cart-payment-info-row">
+                  <span>Ngân hàng:</span>
+                  <strong data-payment-bank-name>MB Bank</strong>
+                </div>
+                <div class="cart-payment-info-row">
+                  <span>Số tài khoản:</span>
+                  <strong data-payment-account-number>2.2345.235872</strong>
+                  <button type="button" class="cart-payment-copy" data-payment-copy="accountNumber">
+                    Sao chép
+                  </button>
+                </div>
+                <div class="cart-payment-info-row">
+                  <span>Chủ tài khoản:</span>
+                  <strong data-payment-account-name>Nguyễn Thị Ngọc</strong>
+                </div>
+                <div class="cart-payment-info-row">
+                  <span>Số tiền:</span>
+                  <strong data-payment-amount>0 đ</strong>
+                </div>
+                <div class="cart-payment-info-row">
+                  <span>Nội dung CK:</span>
+                  <strong data-payment-content>N/A</strong>
+                  <button type="button" class="cart-payment-copy" data-payment-copy="transferContent">
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+
+              <div class="cart-payment-guide">
+                <h4>Hướng dẫn thanh toán:</h4>
+                <ol>
+                  <li>Chuyển khoản đúng số tiền theo thông tin hiển thị.</li>
+                  <li>Ghi đúng nội dung chuyển khoản để cửa hàng kiểm tra nhanh hơn.</li>
+                  <li>Giữ lại xác nhận giao dịch để đối chiếu khi cần.</li>
+                  <li>Bạn có thể mở lại mã QR này bất cứ lúc nào trong lịch sử thuê.</li>
+                </ol>
+              </div>
+
+              <p class="cart-payment-note" data-payment-note>
+                Vui lòng chuyển khoản đúng số tiền và đúng nội dung để Focus Camera xác nhận đơn thuê nhanh hơn.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
     </main>
 
     <site-footer></site-footer>

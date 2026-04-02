@@ -12,7 +12,18 @@ if (cartPage) {
   const couponForm = document.querySelector("[data-cart-coupon-form]");
   const couponNote = document.querySelector("[data-cart-coupon-note]");
   const checkoutButton = document.querySelector("[data-cart-checkout]");
+  const paymentModal = document.querySelector("[data-cart-payment-modal]");
+  const paymentQr = document.querySelector("[data-cart-payment-qr]");
+  const paymentBankName = document.querySelector("[data-cart-payment-bank-name]");
+  const paymentAccountNumber = document.querySelector("[data-cart-payment-account-number]");
+  const paymentAccountName = document.querySelector("[data-cart-payment-account-name]");
+  const paymentAmount = document.querySelector("[data-cart-payment-amount]");
+  const paymentContent = document.querySelector("[data-cart-payment-content]");
+  const paymentCloseButtons = document.querySelectorAll("[data-cart-payment-close]");
+  const paymentCopyButtons = document.querySelectorAll("[data-cart-payment-copy]");
+  const paymentHistoryLink = document.querySelector("[data-cart-payment-history]");
   const numberFormatter = new Intl.NumberFormat("vi-VN");
+  let latestOrder = null;
   const RENTAL_OPTIONS = [
     { value: 0.5, label: "1 buổi" },
     { value: 1, label: "1 ngày" },
@@ -85,6 +96,69 @@ if (cartPage) {
     }
 
     statusElement.hidden = true;
+  };
+
+  const openPaymentModal = () => {
+    if (!paymentModal) {
+      return;
+    }
+
+    paymentModal.hidden = false;
+    document.body.classList.add("modal-open");
+  };
+
+  const closePaymentModal = () => {
+    if (!paymentModal) {
+      return;
+    }
+
+    paymentModal.hidden = true;
+    document.body.classList.remove("modal-open");
+  };
+
+  const renderPaymentModal = (order) => {
+    latestOrder = order || null;
+
+    if (!order?.payment) {
+      return;
+    }
+
+    paymentQr.src = order.payment.qrUrl || "";
+    paymentQr.alt = `Mã QR thanh toán cho đơn ${order.orderCode || ""}`.trim();
+    paymentBankName.textContent = order.payment.bankName || "MB Bank";
+    paymentAccountNumber.textContent =
+      order.payment.accountNumberDisplay || order.payment.accountNumber || "";
+    paymentAccountName.textContent = order.payment.accountName || "";
+    paymentAmount.textContent = formatPrice(order.payment.amount || 0);
+    paymentContent.textContent = order.payment.transferContent || "";
+
+    if (paymentHistoryLink && order.id) {
+      paymentHistoryLink.href = `./tai-khoan.html?order=${encodeURIComponent(order.id)}#lich-su-thue`;
+    }
+  };
+
+  const copyPaymentValue = async (field) => {
+    const payment = latestOrder?.payment;
+
+    if (!payment) {
+      return;
+    }
+
+    const value =
+      field === "accountNumber"
+        ? payment.accountNumberDisplay || payment.accountNumber || ""
+        : payment.transferContent || "";
+
+    if (!value) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setStatus("Đã sao chép thông tin thanh toán.", "success");
+    } catch (error) {
+      setStatus("Không thể sao chép tự động. Vui lòng thử lại.", "error");
+    }
   };
 
   const setSummary = (cart) => {
@@ -275,6 +349,16 @@ if (cartPage) {
     setStatus("Đã ghi nhận mã giảm giá. Bạn có thể hoàn tất đơn thuê ngay khi hồ sơ đã đủ CCCD 2 mặt.");
   });
 
+  paymentCloseButtons.forEach((button) => {
+    button.addEventListener("click", closePaymentModal);
+  });
+
+  paymentCopyButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      copyPaymentValue(button.dataset.cartPaymentCopy);
+    });
+  });
+
   checkoutButton?.addEventListener("click", async () => {
     checkoutButton.disabled = true;
     setStatus("Đang tạo đơn thuê...", "info");
@@ -285,14 +369,12 @@ if (cartPage) {
       });
 
       renderCart(json.cart);
+      renderPaymentModal(json.order);
       setStatus(
-        `Đã tạo đơn thuê ${json.order?.orderCode || ""}. Đang chuyển tới lịch sử thuê...`,
+        `Đã tạo đơn thuê ${json.order?.orderCode || ""}. Bạn có thể thanh toán ngay bằng mã QR bên dưới.`,
         "success"
       );
-
-      window.setTimeout(() => {
-        window.location.href = "./tai-khoan.html#lich-su-thue";
-      }, 900);
+      openPaymentModal();
     } catch (error) {
       const message = String(error.message || "");
 
@@ -311,6 +393,12 @@ if (cartPage) {
       }
     } finally {
       checkoutButton.disabled = false;
+    }
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && paymentModal && !paymentModal.hidden) {
+      closePaymentModal();
     }
   });
 
