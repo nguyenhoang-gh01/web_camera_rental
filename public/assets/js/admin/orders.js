@@ -7,6 +7,9 @@ export function renderSummary() {
   elements.summaryRenters.textContent = String(state.summary?.totalRenters || 0);
   elements.summaryProducts.textContent = String(state.summary?.totalProducts || 0);
   elements.summaryRevenue.textContent = formatPrice(state.summary?.totalRevenue || 0);
+  if (elements.summaryReviews) {
+    elements.summaryReviews.textContent = String(state.summary?.featuredReviews || 0);
+  }
 }
 
 export function renderStatusOptions() {

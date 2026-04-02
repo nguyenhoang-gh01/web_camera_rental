@@ -13,6 +13,13 @@ if (cartPage) {
   const couponNote = document.querySelector("[data-cart-coupon-note]");
   const checkoutButton = document.querySelector("[data-cart-checkout]");
   const numberFormatter = new Intl.NumberFormat("vi-VN");
+  const RENTAL_OPTIONS = [
+    { value: 0.5, label: "1 buổi" },
+    { value: 1, label: "1 ngày" },
+    { value: 2, label: "2 ngày" },
+    { value: 3, label: "3 ngày" },
+    { value: 6, label: "6 ngày" },
+  ];
 
   const formatPrice = (value) => `${numberFormatter.format(Math.round(Number(value) || 0))} đ`;
 
@@ -57,10 +64,9 @@ if (cartPage) {
   };
 
   const buildRentalOptions = (selectedValue) =>
-    Array.from({ length: 30 }, (_, index) => {
-      const value = index + 1;
-      const selected = Number(selectedValue) === value ? " selected" : "";
-      return `<option value="${value}"${selected}>${value} ngày</option>`;
+    RENTAL_OPTIONS.map((option) => {
+      const selected = Number(selectedValue) === option.value ? " selected" : "";
+      return `<option value="${option.value}"${selected}>${option.label}</option>`;
     }).join("");
 
   const setStatus = (message, type = "info") => {
@@ -120,7 +126,6 @@ if (cartPage) {
     emptyElement.hidden = true;
     listElement.innerHTML = cart.items
       .map((item) => {
-        const sessionPrice = Math.round((Number(item.price) * 0.7) / 1000) * 1000;
         const productHref = `./chi-tiet-san-pham.html?slug=${encodeURIComponent(item.productSlug)}`;
 
         return `
@@ -151,7 +156,7 @@ if (cartPage) {
               </div>
 
               <div class="cart-item-prices">
-                <p>${formatPrice(sessionPrice)}<span>/buổi</span></p>
+                <p>${formatPrice(item.sessionPrice)}<span>/buổi</span></p>
                 <p>${formatPrice(item.price)}<span>/ngày</span></p>
               </div>
 
@@ -291,7 +296,7 @@ if (cartPage) {
     } catch (error) {
       const message = String(error.message || "");
 
-      if (/đăng nhập/i.test(message)) {
+      if (/đăng nhập|dang nhap/i.test(message)) {
         setStatus("Vui lòng đăng nhập trước khi tạo đơn thuê.", "error");
         window.setTimeout(() => {
           window.location.href = "./dang-nhap.html";

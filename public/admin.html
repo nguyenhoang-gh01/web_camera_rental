@@ -57,6 +57,10 @@
             <p>Doanh thu tạm tính</p>
             <strong data-summary-revenue>0 đ</strong>
           </article>
+          <article class="admin-summary-card">
+            <p>Bình luận nổi bật</p>
+            <strong data-summary-reviews>0</strong>
+          </article>
         </section>
 
         <div class="admin-layout">
@@ -69,6 +73,9 @@
             </button>
             <button class="admin-nav-item" type="button" data-admin-tab="renters">
               Thông tin người thuê
+            </button>
+            <button class="admin-nav-item" type="button" data-admin-tab="reviews">
+              Quản lý bình luận
             </button>
           </aside>
 
@@ -132,6 +139,27 @@
                 </div>
               </div>
               <div class="admin-renters-grid" data-admin-renters-grid></div>
+            </section>
+
+            <section class="admin-panel" data-admin-panel="reviews" hidden>
+              <div class="admin-panel-head">
+                <div>
+                  <p class="admin-eyebrow">Bình luận</p>
+                  <h2>Chọn đánh giá nào sẽ lên trang chủ</h2>
+                </div>
+                <div class="admin-toolbar">
+                  <input type="search" placeholder="Tìm theo tên, email hoặc nội dung" data-review-search />
+                  <select data-review-rating-filter>
+                    <option value="">Tất cả số sao</option>
+                    <option value="5">5 sao</option>
+                    <option value="4">4 sao</option>
+                    <option value="3">3 sao</option>
+                    <option value="2">2 sao</option>
+                    <option value="1">1 sao</option>
+                  </select>
+                </div>
+              </div>
+              <div class="admin-review-list" data-admin-review-list></div>
             </section>
           </section>
         </div>

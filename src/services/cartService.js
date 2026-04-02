@@ -9,6 +9,7 @@ function toIsoString(value) {
 function mapCartItem(item, index) {
   const rentalDays = Number(item.rental_days ?? item.rentalDays) || 1;
   const price = Number(item.price) || 0;
+  const sessionPrice = Number(item.session_price ?? item.sessionPrice) || 0;
 
   return {
     id: item.id,
@@ -16,11 +17,12 @@ function mapCartItem(item, index) {
     productSlug: item.product_slug ?? item.productSlug,
     productName: item.product_name ?? item.productName,
     price,
+    sessionPrice,
     rentalDays,
     rentalStart: toIsoString(item.rental_start ?? item.rentalStart),
     imageUrl: item.image_url ?? item.imageUrl ?? "",
     index,
-    totalPrice: price * rentalDays,
+    totalPrice: rentalDays === 0.5 ? sessionPrice : price * rentalDays,
   };
 }
 
@@ -114,7 +116,7 @@ async function attachUserToCart(connection, cart, userId) {
 
 async function listCartItems(connection, cartId) {
   const [rows] = await connection.query(
-    `SELECT id, product_id, product_slug, product_name, price, rental_days, rental_start, image_url
+    `SELECT id, product_id, product_slug, product_name, price, session_price, rental_days, rental_start, image_url
      FROM cart_items
      WHERE cart_id = ?
      ORDER BY created_at ASC`,
@@ -176,6 +178,10 @@ async function getCart(token, user = null) {
 
 async function addItem(token, product, payload = {}, user = null) {
   return runWithCart(token, user, async (connection, cart) => {
+    const rentalDays = [0.5, 1, 2, 3, 6].includes(Number(payload.rentalDays))
+      ? Number(payload.rentalDays)
+      : 1;
+
     await connection.query(
       `INSERT INTO cart_items (
         id,
@@ -184,10 +190,11 @@ async function addItem(token, product, payload = {}, user = null) {
         product_slug,
         product_name,
         price,
+        session_price,
         rental_days,
         rental_start,
         image_url
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         crypto.randomUUID(),
         String(cart.id),
@@ -195,7 +202,8 @@ async function addItem(token, product, payload = {}, user = null) {
         String(product.slug),
         String(product.name),
         Number(product.price) || 0,
-        Math.max(1, Number(payload.rentalDays) || 1),
+        Number(product.sessionPrice) || 0,
+        rentalDays,
         payload.rentalStart ? new Date(payload.rentalStart) : new Date(),
         product.thumbnailUrl || product.images?.[0] || "",
       ]
@@ -229,7 +237,9 @@ async function removeItem(token, itemId, user = null) {
 
 async function updateItem(token, itemId, payload = {}, user = null) {
   return runWithCart(token, user, async (connection, cart) => {
-    const rentalDays = Math.max(1, Number(payload.rentalDays) || 1);
+    const rentalDays = [0.5, 1, 2, 3, 6].includes(Number(payload.rentalDays))
+      ? Number(payload.rentalDays)
+      : 1;
     const rentalStart = payload.rentalStart ? new Date(payload.rentalStart) : new Date();
 
     await connection.query(

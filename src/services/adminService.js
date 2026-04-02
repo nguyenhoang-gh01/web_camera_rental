@@ -3,6 +3,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const { getPool } = require("../database/connection");
 const { getConfig } = require("../config/env");
+const reviewService = require("./reviewService");
 
 const ORDER_STATUSES = new Set(["pending", "confirmed", "renting", "completed", "cancelled"]);
 const IMAGE_MIME_EXT = {
@@ -174,6 +175,7 @@ async function getDashboardSummary() {
             COALESCE(SUM(total_price), 0) AS totalRevenue
      FROM rental_orders`
   );
+  const reviewSummary = await reviewService.getReviewSummary();
 
   return {
     totalProducts: Number(productRow.total) || 0,
@@ -181,6 +183,8 @@ async function getDashboardSummary() {
     totalOrders: Number(orderRow.totalOrders) || 0,
     pendingOrders: Number(orderRow.pendingOrders) || 0,
     totalRevenue: Number(orderRow.totalRevenue) || 0,
+    totalReviews: reviewSummary.totalReviews,
+    featuredReviews: reviewSummary.featuredReviews,
   };
 }
 
@@ -472,4 +476,7 @@ module.exports = {
   updateProduct,
   deleteProduct,
   uploadProductImage,
+  listReviews: reviewService.listAdminReviews,
+  updateReview: reviewService.updateAdminReview,
+  deleteReview: reviewService.deleteAdminReview,
 };

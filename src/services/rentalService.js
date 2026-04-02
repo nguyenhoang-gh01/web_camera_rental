@@ -70,7 +70,7 @@ async function ensureUserCanRent(connection, userId) {
 
 async function listCartItems(connection, cartId) {
   const [rows] = await connection.query(
-    `SELECT id, product_id, product_slug, product_name, image_url, price, rental_days, rental_start
+    `SELECT id, product_id, product_slug, product_name, image_url, price, session_price, rental_days, rental_start
      FROM cart_items
      WHERE cart_id = ?
      ORDER BY created_at ASC`,
@@ -80,6 +80,7 @@ async function listCartItems(connection, cartId) {
   return rows.map((item) => {
     const rentalDays = Number(item.rental_days) || 1;
     const price = Number(item.price) || 0;
+    const sessionPrice = Number(item.session_price) || 0;
 
     return {
       id: item.id,
@@ -88,9 +89,10 @@ async function listCartItems(connection, cartId) {
       productName: item.product_name,
       imageUrl: item.image_url || "",
       price,
+      sessionPrice,
       rentalDays,
       rentalStart: toIsoString(item.rental_start),
-      totalPrice: price * rentalDays,
+      totalPrice: rentalDays === 0.5 ? sessionPrice : price * rentalDays,
     };
   });
 }
@@ -113,6 +115,7 @@ function groupOrders(orderRows, itemRows) {
         productName: item.product_name,
         imageUrl: item.image_url || "",
         price: Number(item.price) || 0,
+        sessionPrice: Number(item.session_price) || 0,
         rentalDays: Number(item.rental_days) || 1,
         rentalStart: toIsoString(item.rental_start),
         totalPrice: Number(item.total_price) || 0,
@@ -135,7 +138,7 @@ async function listOrders(userId) {
   }
 
   const [items] = await pool.query(
-    `SELECT id, order_id, product_id, product_slug, product_name, image_url, price, rental_days, rental_start, total_price
+    `SELECT id, order_id, product_id, product_slug, product_name, image_url, price, session_price, rental_days, rental_start, total_price
      FROM rental_order_items
      WHERE order_id IN (?)
      ORDER BY created_at ASC`,
@@ -195,10 +198,11 @@ async function checkoutCart(token, user) {
           product_name,
           image_url,
           price,
+          session_price,
           rental_days,
           rental_start,
           total_price
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           crypto.randomUUID(),
           orderId,
@@ -207,6 +211,7 @@ async function checkoutCart(token, user) {
           item.productName,
           item.imageUrl,
           item.price,
+          item.sessionPrice,
           item.rentalDays,
           new Date(item.rentalStart),
           item.totalPrice,

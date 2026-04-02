@@ -7,6 +7,7 @@ import {
 } from "./state.js";
 import { bindOrderEvents, renderOrders, renderStatusOptions, renderSummary } from "./orders.js";
 import { bindProductEvents, renderCategoryOptions, renderProducts } from "./products.js";
+import { bindReviewEvents, renderReviews } from "./reviews.js";
 import { bindRenterEvents, renderRenters } from "./renters.js";
 import { setStatus } from "./utils.js";
 
@@ -56,6 +57,7 @@ function hydrateDashboardState(payload = {}) {
   state.renters = Array.isArray(payload.renters) ? payload.renters : [];
   state.categories = Array.isArray(payload.categories) ? payload.categories : [];
   state.companies = Array.isArray(payload.companies) ? payload.companies : [];
+  state.reviews = Array.isArray(payload.reviews) ? payload.reviews : [];
 }
 
 function renderDashboard() {
@@ -65,6 +67,7 @@ function renderDashboard() {
   renderOrders();
   renderProducts();
   renderRenters();
+  renderReviews();
 }
 
 export async function loadDashboard() {
@@ -139,6 +142,7 @@ function bindSharedEvents() {
   bindOrderEvents();
   bindProductEvents();
   bindRenterEvents();
+  bindReviewEvents();
 
   elements.refreshButton?.addEventListener("click", () => {
     loadDashboard();

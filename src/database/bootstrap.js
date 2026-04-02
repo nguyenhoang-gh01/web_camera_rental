@@ -48,10 +48,40 @@ async function ensureUsersRoleColumn() {
   );
 }
 
+async function ensureRentalPricingColumns() {
+  const pool = getPool();
+
+  const [cartItemSessionPrice] = await pool.query(
+    "SHOW COLUMNS FROM cart_items LIKE 'session_price'"
+  );
+  if (!Array.isArray(cartItemSessionPrice) || !cartItemSessionPrice.length) {
+    await pool.query(
+      "ALTER TABLE cart_items ADD COLUMN session_price INT NOT NULL DEFAULT 0 AFTER price"
+    );
+  }
+
+  const [orderItemSessionPrice] = await pool.query(
+    "SHOW COLUMNS FROM rental_order_items LIKE 'session_price'"
+  );
+  if (!Array.isArray(orderItemSessionPrice) || !orderItemSessionPrice.length) {
+    await pool.query(
+      "ALTER TABLE rental_order_items ADD COLUMN session_price INT NOT NULL DEFAULT 0 AFTER price"
+    );
+  }
+
+  await pool.query(
+    "ALTER TABLE cart_items MODIFY COLUMN rental_days DECIMAL(4,1) NOT NULL DEFAULT 1.0"
+  );
+  await pool.query(
+    "ALTER TABLE rental_order_items MODIFY COLUMN rental_days DECIMAL(4,1) NOT NULL DEFAULT 1.0"
+  );
+}
+
 async function bootstrapDatabase() {
   await ensureDatabaseExists();
   await applySchema();
   await ensureUsersRoleColumn();
+  await ensureRentalPricingColumns();
   return seedCatalogIfNeeded();
 }
 

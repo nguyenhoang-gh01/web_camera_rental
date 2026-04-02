@@ -44,7 +44,7 @@
 .admin-summary-grid {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 22px;
 }
 
@@ -1264,6 +1264,118 @@
   text-align: center;
 }
 
+.admin-review-list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-review-card {
+  background: #fcfaf7;
+  border: 1px solid #ece4dd;
+  border-radius: 22px;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.admin-review-card__head,
+.admin-review-card__meta,
+.admin-review-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.admin-review-card__head h3,
+.admin-review-card__head p,
+.admin-review-card__content {
+  margin: 0;
+}
+
+.admin-review-card__head h3 {
+  color: #1d1d1d;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.admin-review-card__head p,
+.admin-review-card__meta span {
+  color: #6f6964;
+  font-size: 13px;
+}
+
+.admin-review-rating {
+  color: #d5cdc7;
+  display: inline-flex;
+  font-size: 18px;
+  gap: 2px;
+}
+
+.admin-review-star.is-filled {
+  color: #f0a11c;
+}
+
+.admin-review-card__content {
+  color: #322d2a;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.admin-review-badge {
+  background: #eef8f1;
+  border-radius: 999px;
+  color: #1f6a37;
+  font-weight: 800;
+  padding: 7px 12px;
+}
+
+.admin-review-badge.is-muted {
+  background: #fff1f1;
+  color: #a03030;
+}
+
+.admin-review-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.admin-review-toggle {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #ece4dd;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+}
+
+.admin-review-toggle input {
+  accent-color: #ef2b2d;
+}
+
+.admin-review-actions {
+  justify-content: flex-end;
+}
+
+.admin-review-actions button {
+  background: linear-gradient(135deg, #ef2b2d 0%, #b61f21 100%);
+  border: 0;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 0 16px;
+}
+
+.admin-review-delete {
+  background: linear-gradient(135deg, #c83232 0%, #8f1d1d 100%);
+}
+
 .admin-empty {
   border: 1px dashed #ddd1c8;
   border-radius: 18px;
@@ -1331,6 +1443,13 @@
   .admin-renter-detail__info-grid,
   .admin-renter-preview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-review-card__head,
+  .admin-review-card__meta,
+  .admin-review-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .admin-product-modal__dialog {

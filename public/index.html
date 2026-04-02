@@ -95,53 +95,98 @@
           </div>
         </section>
 
-        <section class="section-block article-section">
-          <div class="section-heading">
-            <h2>Bài viết</h2>
-            <a href="#">Xem thêm</a>
+        <section class="section-block review-showcase" data-home-review-section>
+          <div class="review-showcase__intro">
+            <div class="section-heading review-showcase__heading">
+              <h2>Khách hàng nói gì về Focus Camera</h2>
+            </div>
+            <p class="review-showcase__lead">
+              Lắng nghe cảm nhận từ những khách hàng đã thuê thiết bị tại Focus Camera cho các
+              buổi chụp cá nhân, chuyến đi quan trọng và nhiều dự án cần chuẩn bị nhanh, gọn,
+              đúng nhu cầu.
+            </p>
+            <div class="review-showcase__stats" data-review-summary>
+              <article>
+                <strong data-review-average>0.0</strong>
+                <span>Điểm trung bình</span>
+              </article>
+              <article>
+                <strong data-review-total>0</strong>
+                <span>Lượt đánh giá</span>
+              </article>
+              <article>
+                <strong data-review-max>15</strong>
+                <span>Đánh giá nổi bật</span>
+              </article>
+            </div>
           </div>
 
-          <div class="article-row">
-            <a class="article-card" href="#">
-              <img
-                src="https://api.dathanhcamera.com/image/province/c9ca74764a99a76971892172a20bd4b3a83152b9130e598b2f.jpeg"
-                alt="Hướng dẫn"
-                loading="lazy"
-              />
-              <span>Hướng dẫn</span>
-            </a>
-            <a class="article-card" href="#">
-              <img
-                src="https://api.dathanhcamera.com/image/province/c05ea534273b8dd29a62bbc85f0de4f05e2a0f7feb51b3a27a.jpeg"
-                alt="Bản tin"
-                loading="lazy"
-              />
-              <span>Bản tin</span>
-            </a>
-            <a class="article-card" href="#">
-              <img
-                src="https://api.dathanhcamera.com/image/province/8c9ca74764a99a76971892172a20bd4b3a83152b9130e598b2.jpeg"
-                alt="Đánh giá"
-                loading="lazy"
-              />
-              <span>Đánh giá</span>
-            </a>
-            <a class="article-card" href="#">
-              <img
-                src="https://api.dathanhcamera.com/image/province/c9ca74764a99a76971892172a20bd4b3a83152b9130e598b2f.jpeg"
-                alt="Hướng dẫn"
-                loading="lazy"
-              />
-              <span>Hướng dẫn</span>
-            </a>
-            <a class="article-card" href="#">
-              <img
-                src="https://api.dathanhcamera.com/image/province/c05ea534273b8dd29a62bbc85f0de4f05e2a0f7feb51b3a27a.jpeg"
-                alt="Bản tin"
-                loading="lazy"
-              />
-              <span>Bản tin</span>
-            </a>
+          <div class="review-showcase__layout">
+            <div class="review-carousel" data-review-carousel>
+              <div class="review-carousel__viewport" data-review-viewport>
+                <div class="review-carousel__track" data-review-list>
+                  <div class="review-empty">Đang tải đánh giá khách hàng...</div>
+                </div>
+              </div>
+
+              <div class="review-carousel__footer">
+                <div class="review-carousel__counter" data-review-counter hidden>
+                  <span data-review-current>01</span>
+                  <span>/</span>
+                  <span data-review-count>00</span>
+                </div>
+
+                <div class="review-carousel__actions" data-review-controls hidden>
+                  <button type="button" class="review-carousel__button" data-review-prev aria-label="Xem đánh giá trước">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M14.7 5.3a1 1 0 0 1 0 1.4L9.41 12l5.29 5.3a1 1 0 0 1-1.41 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.41 0Z"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="review-carousel__button" data-review-next aria-label="Xem đánh giá tiếp theo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M9.3 18.7a1 1 0 0 1 0-1.4L14.59 12 9.3 6.7a1 1 0 1 1 1.41-1.4l6 6a1 1 0 0 1 0 1.4l-6 6a1 1 0 0 1-1.41 0Z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <aside class="review-form-card" data-review-form-card>
+              <div class="review-form-card__head">
+                <p class="cart-eyebrow">Gửi đánh giá</p>
+                <h3>Chia sẻ trải nghiệm thuê của bạn</h3>
+              </div>
+
+              <div class="review-form-status" data-review-form-status hidden></div>
+
+              <div class="review-login-hint" data-review-login-hint>
+                <p>Đăng nhập để gửi bình luận và chấm sao cho dịch vụ của Focus Camera.</p>
+                <a href="./dang-nhap.html">Đăng nhập ngay</a>
+              </div>
+
+              <form class="review-form" data-review-form hidden>
+                <div class="review-star-input" data-review-star-input>
+                  <button type="button" data-review-star="1" aria-label="1 sao">★</button>
+                  <button type="button" data-review-star="2" aria-label="2 sao">★</button>
+                  <button type="button" data-review-star="3" aria-label="3 sao">★</button>
+                  <button type="button" data-review-star="4" aria-label="4 sao">★</button>
+                  <button type="button" data-review-star="5" aria-label="5 sao">★</button>
+                </div>
+                <p class="review-form-caption" data-review-star-caption>Chọn số sao đánh giá</p>
+
+                <label class="review-field">
+                  <span>Nhận xét của bạn</span>
+                  <textarea
+                    name="comment"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="Ví dụ: thủ tục nhanh, máy sạch, nhân viên tư vấn đúng nhu cầu..."
+                  ></textarea>
+                </label>
+
+                <button class="review-submit" type="submit">Gửi bình luận</button>
+              </form>
+            </aside>
           </div>
         </section>
 
@@ -267,6 +312,8 @@
 
     <site-footer></site-footer>
     <script src="./assets/js/components.js"></script>
+    <script src="./assets/js/storefront-client.js"></script>
     <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/home-reviews.js"></script>
   </body>
 </html>

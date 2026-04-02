@@ -15,6 +15,7 @@ const accountService = require("./services/accountService");
 const adminService = require("./services/adminService");
 const cartService = require("./services/cartService");
 const rentalService = require("./services/rentalService");
+const reviewService = require("./services/reviewService");
 
 const app = express();
 const config = getConfig();
@@ -113,6 +114,32 @@ app.get("/api/price-rules", async (request, response) => {
   response.json({ priceRules: await listPriceRules() });
 });
 
+app.get("/api/reviews", async (request, response) => {
+  const reviews = await reviewService.listHomeReviews();
+  const summary = await reviewService.getReviewSummary();
+  response.json({
+    reviews,
+    summary,
+    maxDisplay: reviewService.HOME_REVIEW_LIMIT,
+  });
+});
+
+app.post("/api/reviews", async (request, response) => {
+  const user = await getCurrentUser(request);
+
+  if (!user) {
+    response.status(401).json({ error: "Vui lòng đăng nhập để gửi đánh giá." });
+    return;
+  }
+
+  try {
+    const review = await reviewService.createReview(user.id, request.body);
+    response.status(201).json({ review });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể gửi đánh giá." });
+  }
+});
+
 app.get("/api/admin/dashboard", async (request, response) => {
   const adminUser = await requireAdminUser(request, response);
 
@@ -120,7 +147,7 @@ app.get("/api/admin/dashboard", async (request, response) => {
     return;
   }
 
-  const [summary, orders, products, renters, categories, companies] = await Promise.all([
+  const [summary, orders, products, renters, categories, companies, reviews] = await Promise.all([
     adminService.getDashboardSummary(),
     adminService.listOrders({
       status: String(request.query.orderStatus || ""),
@@ -135,6 +162,10 @@ app.get("/api/admin/dashboard", async (request, response) => {
     }),
     adminService.listCatalogCategories(),
     adminService.listCatalogCompanies(),
+    adminService.listReviews({
+      search: String(request.query.reviewSearch || ""),
+      rating: String(request.query.reviewRating || ""),
+    }),
   ]);
 
   response.json({
@@ -145,6 +176,7 @@ app.get("/api/admin/dashboard", async (request, response) => {
     renters,
     categories,
     companies,
+    reviews,
   });
 });
 
@@ -245,6 +277,36 @@ app.post("/api/admin/uploads/product-image", async (request, response) => {
     response.status(201).json(upload);
   } catch (error) {
     response.status(400).json({ error: error.message || "Không thể tải ảnh sản phẩm lên." });
+  }
+});
+
+app.patch("/api/admin/reviews/:reviewId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const review = await adminService.updateReview(request.params.reviewId, request.body);
+    response.json({ review });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể cập nhật bình luận." });
+  }
+});
+
+app.delete("/api/admin/reviews/:reviewId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const deleted = await adminService.deleteReview(request.params.reviewId);
+    response.json({ deleted });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể xóa bình luận." });
   }
 });
 

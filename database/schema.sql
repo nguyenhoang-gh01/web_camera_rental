@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS cart_items (
   product_slug VARCHAR(255) NOT NULL,
   product_name VARCHAR(255) NOT NULL,
   price INT NOT NULL DEFAULT 0,
-  rental_days INT NOT NULL DEFAULT 1,
+  session_price INT NOT NULL DEFAULT 0,
+  rental_days DECIMAL(4,1) NOT NULL DEFAULT 1.0,
   rental_start DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   image_url TEXT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -94,12 +95,27 @@ CREATE TABLE IF NOT EXISTS rental_order_items (
   product_name VARCHAR(255) NOT NULL,
   image_url TEXT NULL,
   price INT NOT NULL DEFAULT 0,
-  rental_days INT NOT NULL DEFAULT 1,
+  session_price INT NOT NULL DEFAULT 0,
+  rental_days DECIMAL(4,1) NOT NULL DEFAULT 1.0,
   rental_start DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   total_price INT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_rental_order_items_order
     FOREIGN KEY (order_id) REFERENCES rental_orders(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS customer_reviews (
+  id CHAR(36) NOT NULL PRIMARY KEY,
+  user_id CHAR(36) NOT NULL,
+  rating TINYINT NOT NULL,
+  comment TEXT NOT NULL,
+  show_on_home TINYINT(1) NOT NULL DEFAULT 0,
+  is_hidden TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_customer_reviews_home (show_on_home, is_hidden, rating, created_at),
+  CONSTRAINT fk_customer_reviews_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
