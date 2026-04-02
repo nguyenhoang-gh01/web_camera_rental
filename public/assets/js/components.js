@@ -11,6 +11,8 @@ const SITE_CONTENT = Object.freeze({
 });
 
 window.SITE_CONTENT = SITE_CONTENT;
+let cartBadgeSyncPromise = null;
+let cartBadgeSyncToken = "";
 
 function getPageId(element) {
   return element.dataset.page || document.body.dataset.page || "";
@@ -206,23 +208,43 @@ async function syncCartBadge(detail = {}) {
     return;
   }
 
-  try {
-    const response = await fetch("/api/cart", {
-      headers: {
-        "X-Cart-Token": cartToken,
-      },
-    });
-    const json = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      setCartBadgeCount(0);
-      return;
-    }
-
-    setCartBadgeCount(Array.isArray(json?.cart?.items) ? json.cart.items.length : 0);
-  } catch (error) {
-    setCartBadgeCount(0);
+  if (document.body.dataset.page === "cart") {
+    return;
   }
+
+  if (cartBadgeSyncPromise && cartBadgeSyncToken === cartToken) {
+    return cartBadgeSyncPromise;
+  }
+
+  cartBadgeSyncToken = cartToken;
+  cartBadgeSyncPromise = (async () => {
+    try {
+      const response = await fetch("/api/cart", {
+        headers: {
+          "X-Cart-Token": cartToken,
+        },
+      });
+      const json = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setCartBadgeCount(0);
+        return;
+      }
+
+      if (json?.cartToken) {
+        window.localStorage.setItem("focusCartToken", String(json.cartToken));
+      }
+
+      setCartBadgeCount(Array.isArray(json?.cart?.items) ? json.cart.items.length : 0);
+    } catch (error) {
+      setCartBadgeCount(0);
+    } finally {
+      cartBadgeSyncPromise = null;
+      cartBadgeSyncToken = "";
+    }
+  })();
+
+  return cartBadgeSyncPromise;
 }
 
 async function handleHeaderLogout() {

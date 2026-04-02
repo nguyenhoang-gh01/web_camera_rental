@@ -134,6 +134,7 @@ site-footer {
   flex: 1;
   gap: 8px;
   justify-content: flex-end;
+  min-width: 0;
 }
 
 .main-nav > a,
@@ -147,6 +148,7 @@ site-footer {
   padding: 10px 12px;
   position: relative;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .main-nav > a:hover,
@@ -251,6 +253,14 @@ site-footer {
 
 .account-link {
   gap: 6px;
+  white-space: nowrap;
+}
+
+.main-nav > a,
+.nav-item,
+.nav-icon,
+.account-link {
+  flex-shrink: 0;
 }
 
 .account-trigger svg {
@@ -3604,6 +3614,43 @@ body.modal-open {
 
   to {
     transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 1240px) and (min-width: 992px) {
+  .header-inner {
+    gap: 14px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-name {
+    font-size: 24px;
+  }
+
+  .brand-tagline {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+
+  .main-nav {
+    gap: 4px;
+  }
+
+  .main-nav > a,
+  .nav-trigger,
+  .nav-icon,
+  .account-link {
+    font-size: 14px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .account-link span,
+  .account-trigger span:first-of-type {
+    font-size: 14px;
   }
 }
 

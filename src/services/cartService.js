@@ -56,6 +56,21 @@ async function getCartByUserId(connection, userId) {
   return rows[0] || null;
 }
 
+async function findExistingCartAfterConflict(connection, token, userId) {
+  let tokenCart = await getCartByToken(connection, token);
+  let userCart = await getCartByUserId(connection, userId);
+
+  if (tokenCart && userId && tokenCart.user_id && tokenCart.user_id !== userId) {
+    tokenCart = null;
+  }
+
+  if (tokenCart && userCart && tokenCart.id !== userCart.id) {
+    return mergeCarts(connection, userCart, tokenCart);
+  }
+
+  return tokenCart || userCart || null;
+}
+
 async function createCart(connection, { token, userId }) {
   const cart = {
     id: crypto.randomUUID(),
@@ -63,10 +78,22 @@ async function createCart(connection, { token, userId }) {
     userId: userId || null,
   };
 
-  await connection.query(
-    "INSERT INTO carts (id, token, user_id) VALUES (?, ?, ?)",
-    [cart.id, cart.token, cart.userId]
-  );
+  try {
+    await connection.query(
+      "INSERT INTO carts (id, token, user_id) VALUES (?, ?, ?)",
+      [cart.id, cart.token, cart.userId]
+    );
+  } catch (error) {
+    if (error?.code === "ER_DUP_ENTRY") {
+      const existingCart = await findExistingCartAfterConflict(connection, cart.token, cart.userId);
+
+      if (existingCart) {
+        return existingCart;
+      }
+    }
+
+    throw error;
+  }
 
   return {
     id: cart.id,
@@ -102,10 +129,22 @@ async function attachUserToCart(connection, cart, userId) {
     return cart;
   }
 
-  await connection.query(
-    "UPDATE carts SET user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-    [userId, cart.id]
-  );
+  try {
+    await connection.query(
+      "UPDATE carts SET user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [userId, cart.id]
+    );
+  } catch (error) {
+    if (error?.code === "ER_DUP_ENTRY") {
+      const userCart = await getCartByUserId(connection, userId);
+
+      if (userCart && userCart.id !== cart.id) {
+        return mergeCarts(connection, userCart, cart);
+      }
+    }
+
+    throw error;
+  }
 
   return {
     ...cart,
@@ -135,7 +174,7 @@ async function resolveCart(connection, token, userId) {
   }
 
   if (tokenCart && userCart && tokenCart.id !== userCart.id) {
-    tokenCart = await mergeCarts(connection, tokenCart, userCart);
+    tokenCart = await mergeCarts(connection, userCart, tokenCart);
     userCart = null;
   }
 
