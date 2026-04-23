@@ -6,7 +6,12 @@ import {
   state,
 } from "./state.js";
 import { bindOrderEvents, renderOrders, renderStatusOptions, renderSummary } from "./orders.js";
-import { bindProductEvents, renderCategoryOptions, renderProducts } from "./products.js";
+import {
+  bindProductEvents,
+  renderCategoryOptions,
+  renderCompanyManager,
+  renderProducts,
+} from "./products.js";
 import { bindReviewEvents, renderReviews } from "./reviews.js";
 import { bindRenterEvents, renderRenters } from "./renters.js";
 import { setStatus } from "./utils.js";
@@ -64,6 +69,7 @@ function renderDashboard() {
   renderSummary();
   renderStatusOptions();
   renderCategoryOptions();
+  renderCompanyManager();
   renderOrders();
   renderProducts();
   renderRenters();

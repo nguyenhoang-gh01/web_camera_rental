@@ -367,6 +367,126 @@ async function listCatalogCompanies() {
   return rows.map((row) => ({ id: Number(row.id) || 0, categoryId: Number(row.category_id) || 0, name: row.name }));
 }
 
+async function createCatalogCompany(payload = {}) {
+  const categoryId = Number(payload.categoryId);
+  const name = String(payload.name || "").trim();
+
+  if (!Number.isFinite(categoryId) || categoryId <= 0) {
+    throw new Error("Danh mục hãng sản phẩm không hợp lệ.");
+  }
+
+  if (name.length < 2) {
+    throw new Error("Tên hãng sản phẩm chưa hợp lệ.");
+  }
+
+  const connection = getPool();
+  const [[category]] = await connection.query(
+    "SELECT id FROM catalog_categories WHERE id = ? LIMIT 1",
+    [categoryId]
+  );
+
+  if (!category) {
+    throw new Error("Danh mục hãng sản phẩm không tồn tại.");
+  }
+
+  const [[duplicate]] = await connection.query(
+    "SELECT id FROM catalog_companies WHERE category_id = ? AND LOWER(name) = LOWER(?) LIMIT 1",
+    [categoryId, name]
+  );
+
+  if (duplicate) {
+    throw new Error("Hãng sản phẩm đã tồn tại trong danh mục này.");
+  }
+
+  const [[idRow]] = await connection.query("SELECT COALESCE(MAX(id), 0) + 1 AS nextId FROM catalog_companies");
+  const companyId = Number(idRow?.nextId) || 1;
+
+  await connection.query(
+    "INSERT INTO catalog_companies (id, category_id, name) VALUES (?, ?, ?)",
+    [companyId, categoryId, name]
+  );
+
+  return {
+    id: companyId,
+    categoryId,
+    name,
+  };
+}
+
+async function updateCatalogCompany(companyId, payload = {}) {
+  const companyKey = Number(companyId);
+  const name = String(payload.name || "").trim();
+
+  if (!Number.isFinite(companyKey) || companyKey <= 0) {
+    throw new Error("Hãng sản phẩm không hợp lệ.");
+  }
+
+  if (name.length < 2) {
+    throw new Error("Tên hãng sản phẩm chưa hợp lệ.");
+  }
+
+  const connection = getPool();
+  const [[existing]] = await connection.query(
+    "SELECT id, category_id FROM catalog_companies WHERE id = ? LIMIT 1",
+    [companyKey]
+  );
+
+  if (!existing) {
+    throw new Error("Không tìm thấy hãng sản phẩm.");
+  }
+
+  const [[duplicate]] = await connection.query(
+    "SELECT id FROM catalog_companies WHERE category_id = ? AND LOWER(name) = LOWER(?) AND id <> ? LIMIT 1",
+    [existing.category_id, name, companyKey]
+  );
+
+  if (duplicate) {
+    throw new Error("Đã có hãng cùng tên trong danh mục này.");
+  }
+
+  await connection.query("UPDATE catalog_companies SET name = ? WHERE id = ?", [name, companyKey]);
+
+  return {
+    id: companyKey,
+    categoryId: Number(existing.category_id) || 0,
+    name,
+  };
+}
+
+async function deleteCatalogCompany(companyId) {
+  const companyKey = Number(companyId);
+
+  if (!Number.isFinite(companyKey) || companyKey <= 0) {
+    throw new Error("Hãng sản phẩm không hợp lệ.");
+  }
+
+  const connection = getPool();
+  const [[existing]] = await connection.query(
+    "SELECT id, name FROM catalog_companies WHERE id = ? LIMIT 1",
+    [companyKey]
+  );
+
+  if (!existing) {
+    throw new Error("Không tìm thấy hãng sản phẩm.");
+  }
+
+  const [[usedRow]] = await connection.query(
+    "SELECT COUNT(*) AS total FROM catalog_products WHERE company_id = ?",
+    [companyKey]
+  );
+
+  if ((Number(usedRow?.total) || 0) > 0) {
+    throw new Error("Không thể xóa hãng đang có sản phẩm. Hãy chuyển hoặc xóa sản phẩm trước.");
+  }
+
+  await connection.query("DELETE FROM catalog_companies WHERE id = ?", [companyKey]);
+
+  return {
+    id: companyKey,
+    name: existing.name,
+  };
+}
+
 async function getProductDetail(productId) {
   const [[row]] = await getPool().query(
     `SELECT products.id, products.slug, products.name, products.price, products.session_price,
@@ -471,6 +591,9 @@ module.exports = {
   listProducts,
   listCatalogCategories,
   listCatalogCompanies,
+  createCatalogCompany,
+  updateCatalogCompany,
+  deleteCatalogCompany,
   getProductDetail,
   createProduct,
   updateProduct,

@@ -265,6 +265,54 @@ app.delete("/api/admin/products/:productId", async (request, response) => {
   }
 });
 
+app.post("/api/admin/companies", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const company = await adminService.createCatalogCompany(request.body);
+    response.status(201).json({ company });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể tạo hãng sản phẩm." });
+  }
+});
+
+app.patch("/api/admin/companies/:companyId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const company = await adminService.updateCatalogCompany(
+      request.params.companyId,
+      request.body
+    );
+    response.json({ company });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể cập nhật hãng sản phẩm." });
+  }
+});
+
+app.delete("/api/admin/companies/:companyId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    const deleted = await adminService.deleteCatalogCompany(request.params.companyId);
+    response.json({ deleted });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể xóa hãng sản phẩm." });
+  }
+});
+
 app.post("/api/admin/uploads/product-image", async (request, response) => {
   const adminUser = await requireAdminUser(request, response);
 

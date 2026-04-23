@@ -97,35 +97,102 @@
               <div class="admin-orders-list" data-admin-orders-list></div>
             </section>
 
-<section class="admin-panel" data-admin-panel="products" hidden>
-              <div class="admin-panel-head">
+            <section class="admin-panel" data-admin-panel="products" hidden>
+              <div class="admin-panel-head admin-panel-head--stacked">
                 <div>
                   <p class="admin-eyebrow">Hàng hóa</p>
-                  <h2>Chỉnh nhanh thông tin sản phẩm</h2>
+                  <h2>Quản trị catalog theo từng nhóm nghiệp vụ</h2>
+                  <p class="admin-section-note">
+                    Tách riêng luồng quản lý sản phẩm và quản lý hãng để thao tác nhanh, tránh nhầm lẫn dữ
+                    liệu.
+                  </p>
                 </div>
-                <div class="admin-toolbar">
-                  <button type="button" data-create-product>Thêm sản phẩm</button>
-                  <input type="search" placeholder="Tìm tên sản phẩm hoặc hãng" data-product-search />
-                  <select data-product-category-filter>
-                    <option value="">Tất cả danh mục</option>
-                  </select>
+                <div class="admin-segmented" role="tablist" aria-label="Chọn khu vực quản lý catalog">
+                  <button
+                    class="admin-segmented__item is-active"
+                    type="button"
+                    data-product-view-mode="products"
+                    aria-selected="true"
+                  >
+                    Sản phẩm
+                  </button>
+                  <button
+                    class="admin-segmented__item"
+                    type="button"
+                    data-product-view-mode="companies"
+                    aria-selected="false"
+                  >
+                    Hãng sản phẩm
+                  </button>
                 </div>
               </div>
-              <div class="admin-products-table-wrap">
-                <table class="admin-products-table">
-                  <thead>
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Danh mục</th>
-                      <th>Hãng</th>
-                      <th>Giá/ngày</th>
-                      <th>Giá/buổi</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody data-admin-products-body></tbody>
-                </table>
-              </div>
+
+              <section class="admin-product-workspace" data-product-view-panel="products">
+                <div class="admin-panel-head">
+                  <div>
+                    <p class="admin-eyebrow">Sản phẩm</p>
+                    <h2>Chỉnh nhanh thông tin sản phẩm</h2>
+                  </div>
+                  <div class="admin-toolbar">
+                    <button type="button" data-create-product>Thêm sản phẩm</button>
+                    <input type="search" placeholder="Tìm tên sản phẩm hoặc hãng" data-product-search />
+                    <select data-product-category-filter>
+                      <option value="">Tất cả danh mục</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="admin-products-table-wrap">
+                  <table class="admin-products-table">
+                    <thead>
+                      <tr>
+                        <th>Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Hãng</th>
+                        <th>Giá/ngày</th>
+                        <th>Giá/buổi</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody data-admin-products-body></tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="admin-product-workspace" data-product-view-panel="companies" hidden>
+                <div class="admin-panel-head">
+                  <div>
+                    <p class="admin-eyebrow">Hãng sản phẩm</p>
+                    <h2>Tạo mới và quản lý hãng</h2>
+                  </div>
+                  <form class="admin-toolbar" data-company-form>
+                    <select data-company-category-select required>
+                      <option value="">Chọn danh mục</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Tên hãng mới"
+                      maxlength="191"
+                      data-company-name-input
+                      required
+                    />
+                    <button type="submit" data-create-company>Tạo hãng</button>
+                  </form>
+                </div>
+
+                <div class="admin-products-table-wrap">
+                  <table class="admin-products-table">
+                    <thead>
+                      <tr>
+                        <th>Hãng</th>
+                        <th>Danh mục</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody data-admin-companies-body></tbody>
+                  </table>
+                </div>
+              </section>
             </section>
 
             <section class="admin-panel" data-admin-panel="renters" hidden>

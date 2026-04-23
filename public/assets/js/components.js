@@ -117,6 +117,7 @@ function buildHeader(page) {
             </button>
             <div class="dropdown-menu">
               <a href="./danh-muc.html?category=thue-camera-may-anh">Thuê Camera (Máy ảnh)</a>
+              <a href="./danh-muc.html?category=thue-lens-ong-kinh">Thuê Lens (Ống kính)</a>
               <a href="./danh-muc.html?category=thue-phu-kien">Thuê Phụ kiện</a>
             </div>
           </div>

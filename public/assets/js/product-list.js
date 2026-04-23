@@ -10,6 +10,13 @@ if (productPage) {
         "https://api.dathanhcamera.com/image/category/5c3cbcdd3c05d76fb8f17e41213be0fcd3193c3b268c79b2f1.jpeg",
     },
     {
+      id: 5,
+      slug: "thue-lens-ong-kinh",
+      name: "Thuê Lens (Ống kính)",
+      fallbackImage:
+        "https://api.dathanhcamera.com/image/category/a1c2d01ca7e13205eaee2af1d4415b6f78e374e883a661761b.jpeg",
+    },
+    {
       id: 6,
       slug: "thue-phu-kien",
       name: "Thuê Phụ kiện",

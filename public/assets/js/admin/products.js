@@ -12,6 +12,20 @@ import {
   setStatus,
 } from "./utils.js";
 
+function setProductViewMode(mode) {
+  const nextMode = mode === "companies" ? "companies" : "products";
+
+  document.querySelectorAll("[data-product-view-mode]").forEach((button) => {
+    const isActive = button.dataset.productViewMode === nextMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  document.querySelectorAll("[data-product-view-panel]").forEach((panel) => {
+    panel.hidden = panel.dataset.productViewPanel !== nextMode;
+  });
+}
+
 function getCompaniesByCategory(categoryId) {
   return state.companies.filter((company) => Number(company.categoryId) === Number(categoryId));
 }
@@ -112,6 +126,32 @@ function createEmptyProductDraft() {
   };
 }
 
+function getCategoryNameById(categoryId) {
+  return state.categories.find((item) => Number(item.id) === Number(categoryId))?.name || "-";
+}
+
+function renderCompanyCategoryOptions() {
+  if (!elements.companyCategorySelect) {
+    return;
+  }
+
+  const current = String(elements.companyCategorySelect.value || "");
+
+  elements.companyCategorySelect.innerHTML = [
+    '<option value="">Chọn danh mục</option>',
+    ...state.categories.map(
+      (category) => `<option value="${category.id}">${escapeHtml(category.name)}</option>`
+    ),
+  ].join("");
+
+  if (current && state.categories.some((item) => Number(item.id) === Number(current))) {
+    elements.companyCategorySelect.value = current;
+    return;
+  }
+
+  elements.companyCategorySelect.value = state.categories[0] ? String(state.categories[0].id) : "";
+}
+
 export function renderCategoryOptions() {
   const current = elements.productCategoryFilter.value || "";
   elements.productCategoryFilter.innerHTML = [
@@ -121,6 +161,43 @@ export function renderCategoryOptions() {
     ),
   ].join("");
   elements.productCategoryFilter.value = current;
+  renderCompanyCategoryOptions();
+}
+
+export function renderCompanyManager() {
+  if (!elements.companiesBody) {
+    return;
+  }
+
+  const companies = [...state.companies].sort((first, second) => {
+    if (Number(first.categoryId) !== Number(second.categoryId)) {
+      return Number(first.categoryId) - Number(second.categoryId);
+    }
+    return String(first.name || "").localeCompare(String(second.name || ""), "vi");
+  });
+
+  if (!companies.length) {
+    elements.companiesBody.innerHTML =
+      '<tr><td colspan="3"><div class="admin-empty">Chưa có hãng sản phẩm.</div></td></tr>';
+    return;
+  }
+
+  elements.companiesBody.innerHTML = companies
+    .map(
+      (company) => `
+        <tr>
+          <td>${escapeHtml(company.name || "-")}</td>
+          <td>${escapeHtml(getCategoryNameById(company.categoryId))}</td>
+          <td>
+            <div class="admin-product-actions">
+              <button class="admin-product-view" type="button" data-rename-company="${company.id}">Đổi tên</button>
+              <button class="admin-product-view admin-product-delete" type="button" data-delete-company="${company.id}">Xóa</button>
+            </div>
+          </td>
+        </tr>
+      `
+    )
+    .join("");
 }
 
 function getFilteredProducts() {
@@ -306,6 +383,100 @@ async function uploadSelectedProductImages() {
   }
 }
 
+async function refreshCatalogData() {
+  const dashboard = await window.focusStorefront.request("/admin/dashboard", { withCart: false });
+  state.summary = dashboard.summary || {};
+  state.products = Array.isArray(dashboard.products) ? dashboard.products : [];
+  state.categories = Array.isArray(dashboard.categories) ? dashboard.categories : [];
+  state.companies = Array.isArray(dashboard.companies) ? dashboard.companies : [];
+  renderSummary();
+  renderProducts();
+  renderCategoryOptions();
+  renderCompanyManager();
+}
+
+async function createCompany() {
+  const categoryId = Number(elements.companyCategorySelect?.value || 0);
+  const name = String(elements.companyNameInput?.value || "").trim();
+
+  if (!categoryId || !name) {
+    setStatus("Vui lòng chọn danh mục và nhập tên hãng.", "error");
+    return;
+  }
+
+  setStatus("Đang tạo hãng sản phẩm...", "info");
+
+  try {
+    await window.focusStorefront.request("/admin/companies", {
+      method: "POST",
+      body: { categoryId, name },
+      withCart: false,
+    });
+    await refreshCatalogData();
+    if (elements.companyNameInput) {
+      elements.companyNameInput.value = "";
+    }
+    setStatus("Đã tạo hãng sản phẩm mới.", "success");
+  } catch (error) {
+    setStatus(error.message || "Không thể tạo hãng sản phẩm.", "error");
+  }
+}
+
+async function renameCompany(companyId) {
+  const current = state.companies.find((item) => String(item.id) === String(companyId));
+
+  if (!current) {
+    setStatus("Không tìm thấy hãng để cập nhật.", "error");
+    return;
+  }
+
+  const nextName = window.prompt("Nhập tên hãng mới", current.name || "");
+
+  if (nextName === null) {
+    return;
+  }
+
+  const name = String(nextName || "").trim();
+
+  if (!name) {
+    setStatus("Tên hãng không được để trống.", "error");
+    return;
+  }
+
+  setStatus("Đang cập nhật hãng sản phẩm...", "info");
+
+  try {
+    await window.focusStorefront.request(`/admin/companies/${encodeURIComponent(companyId)}`, {
+      method: "PATCH",
+      body: { name },
+      withCart: false,
+    });
+    await refreshCatalogData();
+    setStatus("Đã cập nhật tên hãng sản phẩm.", "success");
+  } catch (error) {
+    setStatus(error.message || "Không thể cập nhật hãng sản phẩm.", "error");
+  }
+}
+
+async function deleteCompany(companyId) {
+  if (!window.confirm("Bạn có chắc muốn xóa hãng này không?")) {
+    return;
+  }
+
+  setStatus("Đang xóa hãng sản phẩm...", "info");
+
+  try {
+    await window.focusStorefront.request(`/admin/companies/${encodeURIComponent(companyId)}`, {
+      method: "DELETE",
+      withCart: false,
+    });
+    await refreshCatalogData();
+    setStatus("Đã xóa hãng sản phẩm.", "success");
+  } catch (error) {
+    setStatus(error.message || "Không thể xóa hãng sản phẩm.", "error");
+  }
+}
+
 async function saveProductDetail() {
   const form = elements.productModalBody?.querySelector("[data-product-detail-form]");
   if (!form) return;
@@ -338,14 +509,7 @@ async function saveProductDetail() {
     state.productModalMode = "edit";
     state.productDetail = json.product || null;
     state.activeProductId = state.productDetail?.id || "";
-    const dashboard = await window.focusStorefront.request("/admin/dashboard", { withCart: false });
-    state.summary = dashboard.summary || {};
-    state.products = Array.isArray(dashboard.products) ? dashboard.products : [];
-    state.categories = Array.isArray(dashboard.categories) ? dashboard.categories : [];
-    state.companies = Array.isArray(dashboard.companies) ? dashboard.companies : [];
-    renderSummary();
-    renderProducts();
-    renderCategoryOptions();
+    await refreshCatalogData();
     renderProductModal();
     setProductModalStatus(isCreateMode ? "Đã tạo sản phẩm mới." : "Đã lưu thay đổi sản phẩm.", "success");
     setStatus(isCreateMode ? "Sản phẩm mới đã được tạo." : "Sản phẩm đã được cập nhật.", "success");
@@ -367,16 +531,7 @@ export async function deleteProduct(productId) {
     if (String(state.activeProductId) === String(productId)) {
       closeProductModal();
     }
-    const dashboard = await window.focusStorefront.request("/admin/dashboard", {
-      withCart: false,
-    });
-    state.summary = dashboard.summary || {};
-    state.products = Array.isArray(dashboard.products) ? dashboard.products : [];
-    state.categories = Array.isArray(dashboard.categories) ? dashboard.categories : [];
-    state.companies = Array.isArray(dashboard.companies) ? dashboard.companies : [];
-    renderSummary();
-    renderProducts();
-    renderCategoryOptions();
+    await refreshCatalogData();
     setStatus("Đã xóa sản phẩm.", "success");
   } catch (error) {
     setStatus(error.message || "Không thể xóa sản phẩm.", "error");
@@ -385,9 +540,34 @@ export async function deleteProduct(productId) {
 }
 
 export function bindProductEvents() {
+  setProductViewMode("products");
+
+  document.querySelectorAll("[data-product-view-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setProductViewMode(button.dataset.productViewMode);
+    });
+  });
+
   elements.productSearch?.addEventListener("input", renderProducts);
   elements.productCategoryFilter?.addEventListener("change", renderProducts);
   elements.createProductButton?.addEventListener("click", openCreateProductModal);
+  elements.companyForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    createCompany();
+  });
+
+  elements.companiesBody?.addEventListener("click", (event) => {
+    const renameButton = event.target.closest("[data-rename-company]");
+    if (renameButton) {
+      renameCompany(renameButton.dataset.renameCompany);
+      return;
+    }
+
+    const deleteButton = event.target.closest("[data-delete-company]");
+    if (deleteButton) {
+      deleteCompany(deleteButton.dataset.deleteCompany);
+    }
+  });
 
   elements.productsBody?.addEventListener("click", (event) => {
     const viewButton = event.target.closest("[data-view-product]");
