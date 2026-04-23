@@ -26,6 +26,36 @@ function setProductViewMode(mode) {
   });
 }
 
+function sanitizeSlug(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120);
+}
+
+function syncSlugFromName(options = {}) {
+  const { force = false } = options;
+  const form = elements.productModalBody?.querySelector("[data-product-detail-form]");
+  const nameInput = form?.querySelector('[name="name"]');
+  const slugInput = form?.querySelector('[name="slug"]');
+
+  if (!nameInput || !slugInput) {
+    return;
+  }
+
+  const isManual = slugInput.dataset.slugManual === "true";
+
+  if (isManual && !force) {
+    return;
+  }
+
+  slugInput.value = sanitizeSlug(nameInput.value);
+}
+
 function getCompaniesByCategory(categoryId) {
   return state.companies.filter((company) => Number(company.categoryId) === Number(categoryId));
 }
@@ -253,7 +283,12 @@ export function renderProductModal() {
           Number(category.id) === Number(product.categoryId) ? " selected" : ""
         }>${escapeHtml(category.name)}</option>`
     )
-    .join("");
+      .join("");
+
+  const initialSlug =
+    state.productModalMode === "create"
+      ? sanitizeSlug(product.slug || product.name || "")
+      : String(product.slug || "");
 
   elements.productModalBody.innerHTML = `
     <form class="admin-product-detail" data-product-detail-form>
@@ -282,7 +317,7 @@ export function renderProductModal() {
           </div>
           <div class="admin-product-form__grid">
             <div class="admin-product-form__field is-full"><label for="admin-product-name">Tên sản phẩm</label><input id="admin-product-name" name="name" type="text" value="${escapeHtml(product.name || "")}" required /></div>
-            <div class="admin-product-form__field"><label for="admin-product-slug">Slug</label><input id="admin-product-slug" name="slug" type="text" value="${escapeHtml(product.slug || "")}" required /></div>
+            <div class="admin-product-form__field"><label for="admin-product-slug">Slug</label><input id="admin-product-slug" name="slug" type="text" value="${escapeHtml(initialSlug)}" required /><p class="admin-product-help">Slug tự sinh theo tên sản phẩm, bạn vẫn có thể chỉnh tay nếu muốn.</p></div>
             <div class="admin-product-form__field"><label for="admin-product-thumbnail">Ảnh đại diện</label><input id="admin-product-thumbnail" name="thumbnailUrl" type="text" value="${escapeHtml(product.thumbnailUrl || "")}" /></div>
             <div class="admin-product-form__field"><label for="admin-product-category">Danh mục</label><select id="admin-product-category" name="categoryId" data-product-category-select required>${categoryOptions}</select></div>
             <div class="admin-product-form__field"><label for="admin-product-company">Hãng</label><select id="admin-product-company" name="companyId" data-product-company-select required>${buildCompanyOptions(
@@ -320,6 +355,17 @@ export function renderProductModal() {
   setEditorValue("description", product.description || "");
   setEditorValue("detail", product.detail || "");
   syncThumbnailFieldWithImages();
+
+  const slugInput = elements.productModalBody.querySelector('[name="slug"]');
+
+  if (slugInput) {
+    slugInput.dataset.slugManual =
+      state.productModalMode === "edit" && String(product.slug || "").trim() ? "true" : "false";
+  }
+
+  if (state.productModalMode === "create") {
+    syncSlugFromName({ force: true });
+  }
 }
 
 export function openCreateProductModal() {
@@ -634,6 +680,14 @@ export function bindProductEvents() {
   });
 
   elements.productModalBody?.addEventListener("input", (event) => {
+    if (event.target.matches('[name="name"]')) {
+      syncSlugFromName();
+      return;
+    }
+    if (event.target.matches('[name="slug"]')) {
+      event.target.dataset.slugManual = "true";
+      return;
+    }
     if (event.target.matches('[name="thumbnailUrl"]')) {
       updatePreviewImage();
       return;
@@ -654,6 +708,13 @@ export function bindProductEvents() {
   elements.productModalBody?.addEventListener(
     "blur",
     (event) => {
+      if (event.target.matches('[name="slug"]')) {
+        if (!String(event.target.value || "").trim()) {
+          event.target.dataset.slugManual = "false";
+          syncSlugFromName({ force: true });
+        }
+        return;
+      }
       if (event.target.matches("[data-rich-editor]")) {
         normalizeEditorSurface(event.target);
       }
