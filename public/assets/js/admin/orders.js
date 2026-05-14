@@ -94,6 +94,7 @@ export function renderOrders() {
           <div class="admin-order-actions">
             <select class="admin-order-status-select" data-order-status-select="${order.id}">${optionHtml}</select>
             <button type="button" data-save-order-status="${order.id}">Lưu trạng thái</button>
+            ${order.status === "cancelled" ? `<button type="button" class="admin-btn-danger" data-delete-order="${order.id}">Xóa đơn</button>` : ""}
           </div>
         </section>
       `;
@@ -119,11 +120,30 @@ export async function saveOrderStatus(orderId) {
   }
 }
 
+export async function deleteOrder(orderId) {
+  if (!confirm("Bạn có chắc muốn xóa đơn đã hủy này? Hành động này không thể hoàn tác.")) return;
+  setStatus("Đang xóa đơn thuê...", "info");
+  try {
+    await window.focusStorefront.request(`/admin/orders/${orderId}`, {
+      method: "DELETE",
+      withCart: false,
+    });
+    state.orders = state.orders.filter((order) => order.id !== orderId);
+    renderOrders();
+    setStatus("Đã xóa đơn thuê.", "success");
+  } catch (error) {
+    setStatus(error.message || "Không thể xóa đơn thuê.", "error");
+  }
+}
+
 export function bindOrderEvents() {
   elements.orderSearch?.addEventListener("input", renderOrders);
   elements.orderStatusFilter?.addEventListener("change", renderOrders);
   elements.ordersList?.addEventListener("click", (event) => {
     const saveButton = event.target.closest("[data-save-order-status]");
     if (saveButton) saveOrderStatus(saveButton.dataset.saveOrderStatus);
+
+    const deleteButton = event.target.closest("[data-delete-order]");
+    if (deleteButton) deleteOrder(deleteButton.dataset.deleteOrder);
   });
 }

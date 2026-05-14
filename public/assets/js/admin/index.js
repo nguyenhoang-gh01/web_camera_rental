@@ -151,7 +151,12 @@ function bindSharedEvents() {
   bindReviewEvents();
 
   elements.refreshButton?.addEventListener("click", () => {
-    loadDashboard();
+    elements.refreshButton.classList.add("is-loading");
+    elements.refreshButton.disabled = true;
+    loadDashboard().finally(() => {
+      elements.refreshButton.classList.remove("is-loading");
+      elements.refreshButton.disabled = false;
+    });
   });
 }
 

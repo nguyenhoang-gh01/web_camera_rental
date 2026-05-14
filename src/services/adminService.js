@@ -267,6 +267,16 @@ async function updateOrderStatus(orderId, status) {
   return orders.find((order) => order.id === orderId) || null;
 }
 
+async function deleteOrder(orderId) {
+  const [[order]] = await getPool().query(
+    "SELECT id, status FROM rental_orders WHERE id = ?",
+    [orderId]
+  );
+  if (!order) throw new Error("Không tìm thấy đơn thuê.");
+  if (order.status !== "cancelled") throw new Error("Chỉ có thể xóa đơn đã bị hủy.");
+  await getPool().query("DELETE FROM rental_orders WHERE id = ?", [orderId]);
+}
+
 async function listRenters(filters = {}) {
   const params = [];
   const where = [];
@@ -280,17 +290,24 @@ async function listRenters(filters = {}) {
   const [rows] = await getPool().query(
     `SELECT users.id, users.full_name, users.phone, users.email, users.created_at, profiles.birthday,
             profiles.address, profiles.identity_number, profiles.facebook_url,
-            COUNT(DISTINCT orders.id) AS total_orders, COALESCE(SUM(orders.total_price), 0) AS total_spent,
+            COALESCE(order_stats.total_orders, 0) AS total_orders,
+            COALESCE(order_stats.total_spent, 0) AS total_spent,
             MAX(CASE WHEN documents.document_type = 'cccd_front' THEN documents.file_path END) AS cccd_front_path,
             MAX(CASE WHEN documents.document_type = 'cccd_back' THEN documents.file_path END) AS cccd_back_path,
             MAX(CASE WHEN documents.document_type = 'personal_other' THEN documents.file_path END) AS personal_other_path
      FROM users
      LEFT JOIN user_profiles AS profiles ON profiles.user_id = users.id
-     LEFT JOIN rental_orders AS orders ON orders.user_id = users.id
+     LEFT JOIN (
+       SELECT user_id, COUNT(*) AS total_orders, COALESCE(SUM(total_price), 0) AS total_spent
+       FROM rental_orders
+       WHERE status != 'cancelled'
+       GROUP BY user_id
+     ) AS order_stats ON order_stats.user_id = users.id
      LEFT JOIN user_documents AS documents ON documents.user_id = users.id
      ${whereSql}
      GROUP BY users.id, users.full_name, users.phone, users.email, users.created_at,
-              profiles.birthday, profiles.address, profiles.identity_number, profiles.facebook_url
+              profiles.birthday, profiles.address, profiles.identity_number, profiles.facebook_url,
+              order_stats.total_orders, order_stats.total_spent
      ORDER BY users.created_at DESC`,
     params
   );
@@ -587,6 +604,7 @@ module.exports = {
   getDashboardSummary,
   listOrders,
   updateOrderStatus,
+  deleteOrder,
   listRenters,
   listProducts,
   listCatalogCategories,

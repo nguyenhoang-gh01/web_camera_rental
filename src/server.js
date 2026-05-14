@@ -199,6 +199,21 @@ app.patch("/api/admin/orders/:orderId", async (request, response) => {
   }
 });
 
+app.delete("/api/admin/orders/:orderId", async (request, response) => {
+  const adminUser = await requireAdminUser(request, response);
+
+  if (!adminUser) {
+    return;
+  }
+
+  try {
+    await adminService.deleteOrder(request.params.orderId);
+    response.json({ success: true });
+  } catch (error) {
+    response.status(400).json({ error: error.message || "Không thể xóa đơn thuê." });
+  }
+});
+
 app.post("/api/admin/products", async (request, response) => {
   const adminUser = await requireAdminUser(request, response);
 

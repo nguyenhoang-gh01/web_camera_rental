@@ -31,7 +31,13 @@
               <li>Admin</li>
             </ol>
           </div>
-          <a class="admin-header-link" href="./tai-khoan.html">Về tài khoản</a>
+          <div class="admin-header-actions">
+            <a class="admin-header-link" href="./tai-khoan.html">Về tài khoản</a>
+            <button type="button" class="admin-header-refresh" data-admin-refresh title="Tải lại dữ liệu">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+              Tải lại
+            </button>
+          </div>
         </section>
 
         <div class="admin-status" data-admin-status>Đang tải dữ liệu quản trị...</div>
@@ -91,7 +97,6 @@
                   <select data-order-status-filter>
                     <option value="">Tất cả trạng thái</option>
                   </select>
-                  <button type="button" data-admin-refresh>Refresh</button>
                 </div>
               </div>
               <div class="admin-orders-list" data-admin-orders-list></div>

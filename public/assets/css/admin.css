@@ -9,6 +9,12 @@
   align-items: center;
 }
 
+.admin-header-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
 .admin-header-link {
   background: #ffffff;
   border: 1px solid #eadfd6;
@@ -16,6 +22,34 @@
   color: #342d29;
   font-weight: 700;
   padding: 11px 18px;
+}
+
+.admin-header-refresh {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #eadfd6;
+  border-radius: 999px;
+  color: #342d29;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 6px;
+  padding: 11px 18px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.admin-header-refresh:hover {
+  background: #fdf5ee;
+  border-color: #c9a87a;
+}
+
+.admin-header-refresh.is-loading svg {
+  animation: admin-spin 0.7s linear infinite;
+}
+
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
 }
 
 .admin-status {
@@ -412,6 +446,17 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 16px;
+}
+
+.admin-btn-danger {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
+
+.admin-btn-danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
 }
 
 .admin-order-status-select {
